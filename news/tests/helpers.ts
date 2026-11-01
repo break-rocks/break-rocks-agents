@@ -15,7 +15,7 @@ export function tmpLaunch(over: Partial<Launch['config']> = {}, sources: Source[
     config: {
       name: 'test', description: '', languages: ['fr', 'en'], themes: [], universes: { default: ['%news'], byCategory: { tech: ['%tech'] } },
       verification: { minOutlets: 2, sensitiveCategories: ['crime_justice', 'politics'], publishUnconfirmed: true },
-      clustering: { threshold: 0.34, windowHours: 48 }, collect: { maxAgeHours: 72, concurrency: 2, userAgent: 'test' }, schedule: '0 * * * *', ...over,
+      clustering: { backend: 'lexical', threshold: 0.34, windowHours: 48, mergeThreshold: 0.5 }, collect: { maxAgeHours: 72, concurrency: 2, userAgent: 'test' }, schedule: '0 * * * *', ...over,
     },
   };
 }

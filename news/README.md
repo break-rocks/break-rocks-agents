@@ -177,20 +177,81 @@ schedule: "15 7-22 * * *"                   # informative: the scheduler runs th
 
 - **Collect**: each source at most once per its `frequency`, with `If-None-Match` / `If-Modified-Since`,
   a 20 s timeout, an identified User-Agent, 6 feeds in parallel and GDELT one request at a time (its
-  limit is one per 5 s). The charset of the feed is honoured.
+  limit is one per 5 s). The charset of the feed is honoured. A 429 (or GDELT's plain-text "limit
+  requests" answer) puts the source in backoff: `Retry-After` when given, else 5 min doubling up to 6 h;
+  after 3 in a row it is disabled for 24 h, and `status` shows it. GDELT is fetched at most once an hour
+  (`politeness.gdeltMinFrequency`) and its answer is cached 15 min, `--force` included.
 - **Normalise**: canonical URL (tracking parameters removed), stable article id, title, outlet and owner
   group, language, country, published and collected dates, category (from the source, overridden by
-  crime and justice keywords or the launch's `categoryKeywords`).
-- **Group into events**, without ML: normalised title tokens and bigram shingles (Jaccard), capitalised
-  entity phrases (overlap), within a 48 h window. The similarity is an interface (`src/cluster.ts`),
-  ready for embeddings. An event id (`ev_…`) is derived from its first article and never changes.
+  crime and justice keywords or the launch's `categoryKeywords`), and a **promotion** mark: deal words in
+  seven languages ("bon plan", "Schnäppchen", "chollo"…), a price with a discount ("-30 %", "au lieu
+  de"), affiliate URL parameters or hosts, a deal section of the site, or a source category among
+  `filters.promoCategories`. Promotions are grouped like the rest but kept out of `pending_events`
+  (`filters.keepPromo: true` keeps them).
+- **Group into events**: by default without ML (`lexical`): normalised title tokens and bigram shingles
+  (Jaccard), capitalised entity phrases (overlap), within a 48 h window. With `clustering.backend:
+  embedding` (see [Semantic grouping](#semantic-grouping)), the cosine of multilingual title vectors plus
+  shared entities, minus a little for the time distance: paraphrases and translations group. An event id
+  (`ev_…`) is derived from its first article.
+- **Merge**: a new article that matches two events, both at `clustering.mergeThreshold` or more, merges
+  them. The published one (else the older one) keeps its id; the other id becomes an alias that `event`
+  and `record_publication` still accept, so a post stays attached. The event comes back in
+  `pending_events` with the reason `merged` and `mergedFrom`. Two published events are never merged.
 - **Verify**: `to_confirm` with one outlet group, `corroborated` with `minOutlets` independent groups
   (two titles of one owner count once) or one official source. Sensitive categories wait for
   corroboration.
 - **Update**: a published event comes back as `kind: update` when it gets new outlets, its verification
   changes or its headline changes materially.
+- **Caps on the server**: with an agent block, `pending_events` never hands out more events than the
+  hourly and daily caps leave; each event handed out counts at once (recording it later does not count it
+  twice), and one handed out but not recorded is held back 2 hours. An AI that publishes without
+  recording cannot go past the caps. `mark_event` gives a hand-out back.
 - **History**: SQLite keeps every article, event and publication (post id, summary version, exact text,
   verification at that time, source URLs, dates); `events/<id>.json` mirrors each event for reading.
+- **Retention**: once a day, `collect` deletes events never published 30 days after their last article
+  (`retention.articlesDays`), published events 180 days after (`retention.eventsDays`, with their
+  articles and publications), logs and `runs.jsonl` lines after 30 days (`retention.logsDays`), then
+  runs `VACUUM`. `breakrocks-news purge <launch>` does it now.
+
+## Semantic grouping
+
+Optional; the default lexical backend needs nothing. In the launch's `config.yaml`:
+
+```yaml
+clustering:
+  backend: embedding        # default: lexical
+  # threshold: 0.75         # defaults for embedding: 0.75, mergeThreshold 0.83 (lexical: 0.34 and 0.5)
+  embedding:
+    provider: local         # local | openai | ollama
+    model: Xenova/paraphrase-multilingual-MiniLM-L12-v2
+    # url: http://127.0.0.1:11434          (ollama; openai: any OpenAI-compatible base URL, …/v1)
+    # apiKeyEnv: OPENAI_API_KEY            (openai: the name of the variable, never the key)
+    # prefix: "query: "                    (e5 models)
+```
+
+- `local` runs [transformers.js](https://github.com/huggingface/transformers.js) (Apache-2.0) with ONNX
+  Runtime (MIT), an optional dependency of about 470 MB, not installed by `npm ci`:
+  `npm i --no-save @huggingface/transformers@4.3.1` in the kit folder. The default model,
+  `paraphrase-multilingual-MiniLM-L12-v2` (Apache-2.0, 50+ languages, ~120 MB quantised), is downloaded
+  once into the transformers.js cache; about 2 s for 300 titles on a laptop. `multilingual-e5-small`
+  (MIT) works too (`prefix: "query: "`), but compressed its scores on news titles and chained unrelated
+  stories in our test.
+- `openai`: `POST <url>/embeddings`; `ollama`: `POST <url>/api/embed` (e.g. `bge-m3`,
+  `nomic-embed-text`). Thresholds depend on the model: tune them on a real collect.
+- Vectors are stored in `news.db` (table `vectors`, keyed by article and model). If the embedder fails
+  (not installed, endpoint down), that collect groups lexically and reports `embedding.error`.
+
+First real run on `fr-tech` (291 articles in 48 h, the same articles grouped both ways):
+
+| Backend | Events | Events with several outlets |
+|---|---|---|
+| lexical | 271 | 8 |
+| embedding, threshold 0.75 | 263 | 14 |
+
+It groups "Pour Sam Altman, la RAM de votre PC…" with "Le patron d'OpenAI juge « terrible »…", and
+three outlets on Xavier Niel's "ignares incompétents". It also groups some stories that are only close
+(two AI-and-cybersecurity headlines); a lower threshold (0.6) made 27 multi-outlet events but many were
+topics rather than stories.
 
 ## MCP tools
 
@@ -198,14 +259,14 @@ schedule: "15 7-22 * * *"                   # informative: the scheduler runs th
 |---|---|---|
 | `launches_list` | | the launches with their settings |
 | `collect` | `launch`, `force?` | fetches the due sources, groups, returns counts and errors |
-| `pending_events` | `launch`, `limit?` | events to publish (`new`) or update (`update`), with their universes |
-| `event` | `launch`, `id` | an event, its articles (with rights notes) and publications |
+| `pending_events` | `launch`, `limit?` | `{ events, caps, withheld }`: events to publish (`new`) or update (`update`), with their universes, within the caps |
+| `event` | `launch`, `id` | an event (by id or alias), its aliases, articles (with rights notes) and publications |
 | `record_publication` | `launch`, `eventId`, `postId`, `summaryVersion`, `text`, `status` | records a post (`published`, `edited`, `update_reply`, `reposted`, `failed`) |
 | `mark_event` | `launch`, `id`, `status` | `skipped` or `needs_review` |
 | `save_draft` | `launch`, `eventId`, `kind`, `text`, `universes` | dry run: writes the post to `drafts/` instead of publishing |
 
 The same binary also runs without AI: `breakrocks-news collect <launch> [--force]` and
-`breakrocks-news pending <launch>`.
+`breakrocks-news pending <launch>` (no hand-out, no caps) and `breakrocks-news purge <launch>`.
 
 ## Setup
 
@@ -290,23 +351,26 @@ Dependencies are pinned and were at least 7 days old when added (`npm install --
 
 ## Limits
 
-- Grouping is lexical: two headlines of one story with no shared words or entities ("OpenAI's boss" /
-  "Sam Altman") make two events; across languages, only shared entities and numbers connect them.
-- Events are never merged or split after creation.
+- Lexical grouping (the default) misses paraphrases ("OpenAI's boss" / "Sam Altman") and translations;
+  the embedding backend catches many, but groups some stories that are only on the same topic, and a
+  small model does not know that "le patron d'OpenAI" is Sam Altman unless the headlines say more.
+- Grouping is single-link: one close member is enough to join an event, so events can drift. Events are
+  merged, never split; two published events are never merged.
+- The promotion filter is heuristic: a news story about prices ("le chauffage le moins cher") can be
+  marked, and a deal written as news can pass; the prompt still asks the AI to skip what slips through.
 - Categories come from the source plus keywords: a crime story in a tech feed may slip through; the
   prompt asks the AI to mark such events `needs_review`.
-- GDELT answers 429 when called too often from one IP; the source is then retried at its next frequency.
-- No pruning: `data/` grows forever.
+- GDELT answers 429 when called too often from one IP: it backs off and is disabled 24 h after three.
 - Edits are limited to 1 hour (D-228); the "Automated" mark (D-229), structured sources (D-230) and
   `agentsForbidden` (D-232) are used when the platform and CLI expose them (`PROMPT.md`).
-- The caps are checked before each AI run and counted from `record_publication` / `save_draft`: an AI
-  that publishes without recording escapes them (the loop logs `overCap` when it sees more than allowed).
+- The caps are enforced on what `pending_events` hands out: an AI that publishes events it never got from
+  `pending_events` (by id from an earlier run) still escapes them; the platform's limits remain the backstop.
 - The Codex template (MCP servers as `-c` overrides, `env_vars` forwarding) was not run end to end.
 
 ## Next steps
 
-- Embedding similarity behind the `Similarity` interface (multilingual), event merging.
-- Pruning and archiving of old articles; a Postgres store for large deployments.
-- Quiet hours; caps enforced by the platform rather than by the loop.
+- Average-link or centroid grouping for the embedding backend; splitting drifting events.
+- Archiving before purge; a Postgres store (pgvector) for large deployments.
+- Quiet hours; caps enforced by the platform rather than by the kit.
 - Official-source detection beyond the `official` flag; outlet ownership groups from a shared table.
 - A platform "automated" label and longer edit windows, then drop the reply fallback.

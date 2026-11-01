@@ -6,11 +6,10 @@ import { hostname } from 'node:os';
 import { join } from 'node:path';
 import { frequencyMs, kitDir } from './config.js';
 import { allowedTools, buildPrompt, codexMcpArgs, renderTemplate, spawnRunner, TEMPLATES, type RunResult } from './runner.js';
-import { collect, openStore, pendingEvents } from './service.js';
-import type { AgentSettings, Launch, PublicationStatus } from './types.js';
+import { capUsage, collect, COUNTED, openStore, pendingEvents } from './service.js';
+import type { AgentSettings, Launch } from './types.js';
 
-/** What the caps count: posts that went out (new posts, "Update" replies) and, in dry run, drafts. */
-export const COUNTED: PublicationStatus[] = ['published', 'update_reply', 'drafted'];
+export { COUNTED };
 
 /** How many events the next AI run may handle: the batch, within what is left of the hourly and daily caps. */
 export function allowance(limits: AgentSettings['limits'], usedLastHour: number, usedLastDay: number): number {
@@ -19,12 +18,7 @@ export function allowance(limits: AgentSettings['limits'], usedLastHour: number,
 
 export function capsUsed(launch: Launch, now = new Date()) {
   const store = openStore(launch);
-  try {
-    return {
-      hour: store.publicationsSince(new Date(now.getTime() - 3_600_000).toISOString(), COUNTED),
-      day: store.publicationsSince(new Date(now.getTime() - 86_400_000).toISOString(), COUNTED),
-    };
-  } finally { store.close(); }
+  try { return capUsage(store, now); } finally { store.close(); }
 }
 
 // ---- lock ----
@@ -200,10 +194,15 @@ export function launchStatus(launch: Launch) {
   const last = runs.at(-1);
   const store = openStore(launch);
   const byStatus: Record<string, number> = {};
-  let counts;
+  let counts, sources, lastPurge;
+  const nowIso = new Date().toISOString();
   try {
     counts = store.counts();
     for (const e of store.allEvents()) byStatus[e.status] = (byStatus[e.status] ?? 0) + 1;
+    lastPurge = store.meta('last_purge') ?? null;
+    // Sources held back after 429s: in backoff, or disabled (GDELT after repeated 429s).
+    sources = store.allSourceStates().filter((st) => (st.disabledUntil && st.disabledUntil > nowIso) || (st.backoffUntil && st.backoffUntil > nowIso))
+      .map((st) => ({ id: st.sourceId, consecutive429: st.consecutive429 ?? 0, ...(st.disabledUntil && st.disabledUntil > nowIso ? { disabledUntil: st.disabledUntil } : { backoffUntil: st.backoffUntil }) }));
   } finally { store.close(); }
   const agent = launch.config.agent;
   const holder = lockHolder(launch);
@@ -212,6 +211,8 @@ export function launchStatus(launch: Launch) {
     running: holder && alive(holder.pid) ? holder : null,
     lastRun: last ?? null, runs: runs.length, lastAiRun: [...runs].reverse().find((r) => r.runner)?.at ?? null,
     counts, events: byStatus, pending: pendingEvents(launch, 1000).length,
+    similarity: launch.config.clustering.backend === 'embedding' ? `embedding (${launch.config.clustering.embedding?.provider}:${launch.config.clustering.embedding?.model})` : 'lexical',
+    heldSources: sources, lastPurge,
     caps: agent ? { ...agent.limits, used: capsUsed(launch) } : null,
     recentErrors: runs.slice(-10).flatMap((r) => [...r.errors, ...(r.collect?.errors ?? []).map((e) => `source ${e.id}: ${e.error}`)].map((e) => `${r.at} ${e}`)).slice(-10),
   };

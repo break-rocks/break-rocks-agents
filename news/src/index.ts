@@ -10,7 +10,7 @@ import { examplesDir, launchesRoot, loadLaunch, migrateKitLaunches, newsHome } f
 import { launchStatus, LockedError, runLoop, stopFile } from './loop.js';
 import { schedule, unschedule, type Scheduler } from './schedule.js';
 import { createServer } from './server.js';
-import { collect, pendingEvents } from './service.js';
+import { collect, openStore, pendingEvents, purgeLaunch } from './service.js';
 import { answersFromExample, loadCatalogue, writeLaunch } from './setup.js';
 import type { Launch } from './types.js';
 import { answersFromFile, answersFromFlags, completeAnswers, existed, parseFlags, terminalIo } from './start.js';
@@ -25,6 +25,7 @@ const USAGE = `Usage:
   breakrocks-news unschedule <launch>
   breakrocks-news collect <launch> [--force]
   breakrocks-news pending <launch>
+  breakrocks-news purge <launch>           delete what is past retention now, then VACUUM
 
 Launches live in the news home: ~/.breakrocks/kits/news/launches/<name>/ (BREAKROCKS_NEWS_HOME or --home
 to change it; BREAKROCKS_HOME moves the breakrocks home).
@@ -76,6 +77,12 @@ async function main() {
     case undefined: await createServer().connect(new StdioServerTransport()); return;
     case 'collect': if (!name) break; console.log(JSON.stringify(await collect(loadLaunch(name), { force: !!flags.force }), null, 2)); return;
     case 'pending': if (!name) break; console.log(JSON.stringify(pendingEvents(loadLaunch(name), 50), null, 2)); return;
+    case 'purge': {
+      if (!name) break;
+      const l = loadLaunch(name), store = openStore(l);
+      try { console.log(JSON.stringify(purgeLaunch(l, store), null, 2)); } finally { store.close(); }
+      return;
+    }
     case 'start': {
       let example = {};
       if (typeof flags['from-example'] === 'string') {
@@ -111,6 +118,8 @@ async function main() {
       console.log(`${s.launch}: ${s.mode}${s.stop ? ', STOPPED (STOP file)' : ''}${s.running ? `, running (pid ${s.running.pid} since ${s.running.startedAt})` : ', not running'}`);
       console.log(`runs: ${s.runs}, last ${s.lastRun?.at ?? 'never'}, last AI run ${s.lastAiRun ?? 'never'}`);
       console.log(`store: ${s.counts?.articles} articles, ${s.counts?.events} events, ${s.counts?.publications} publications; events ${JSON.stringify(s.events)}; ${s.pending} pending`);
+      console.log(`grouping: ${s.similarity}; last purge ${s.lastPurge ?? 'never'}`);
+      for (const h of s.heldSources) console.log(`source ${h.id}: ${'disabledUntil' in h ? `DISABLED until ${h.disabledUntil}` : `backoff until ${h.backoffUntil}`} (${h.consecutive429} x 429)`);
       if (s.caps) console.log(`caps: ${s.caps.used.hour}/${s.caps.perHour} this hour, ${s.caps.used.day}/${s.caps.perDay} today, batch ${s.caps.batch}`);
       if (s.recentErrors.length) console.log(`recent errors:\n  ${s.recentErrors.join('\n  ')}`);
       return;

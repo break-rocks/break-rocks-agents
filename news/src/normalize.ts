@@ -96,9 +96,60 @@ export function decodeEntities(s: string): string {
     .replace(/\s+/g, ' ').trim();
 }
 
+// ---- promotions and deals ----
+
+/** Deal words and phrases in en, fr, de, es, it, pt, nl (whole words, lower case, accents removed). */
+const PROMO_PHRASES = ['bon plan', 'bons plans', 'code promo', 'codes promo', 'prix casse', 'prix sacrifie', 'vente flash', 'moins cher', 'prix en baisse', 'au meilleur prix',
+  'offre speciale', 'chute de prix', 'best price', 'lowest price', 'price drop', 'price cut', 'on sale', 'flash sale', 'promo code', 'promo codes', 'prezzo piu basso',
+  'black friday deal', 'prime day deal', 'cyber monday deal', 'deal of the day', 'good deal'];
+const PROMO_SINGLE = new Set(['deals', 'bargain', 'bargains', 'coupons', 'discount', 'discounted', 'voucher', 'vouchers', 'soldes', 'reduction', 'remise', 'promos',
+  'angebot', 'angebote', 'rabatt', 'gutschein', 'schnappchen', 'preissturz', 'bestpreis', 'descuento', 'descuentos', 'chollo', 'chollos', 'rebaja', 'rebajas', 'cupon',
+  'sconto', 'sconti', 'promocao', 'promocoes', 'desconto', 'descontos', 'cupom', 'aanbieding', 'aanbiedingen', 'korting', 'kortingscode',
+  'oferta', 'ofertas', 'offerta', 'offerte', 'promo', 'coupon', 'deal']);
+/** Words that are deal words alone only in titles: "promo", "offerta", "oferta" also mean news ("a public offer"). */
+const WEAK = new Set(['oferta', 'ofertas', 'offerta', 'offerte', 'promo', 'promos', 'coupon', 'deal', 'reduction', 'remise', 'angebot', 'discount']);
+
+const PRICE = /(\d[\d\s.,]*\s?(€|\$|£|eur|euros?|usd|chf)(?![\p{L}])|[€$£]\s?\d)/iu;
+const DISCOUNT = /(-\s?\d{1,2}\s?%|\d{1,2}\s?%\s?(off|de r[ée]duction|de remise|rabatt|de descuento|di sconto)|au lieu de|instead of|statt|en lugar de|invece di|was \$|ab \d+[,.]?\d*\s?€)/iu;
+const AFFILIATE_PARAMS = /^(tag|affid|aff_id|affiliate|affiliate_id|aff|awc|clickref|irclickid|cjevent|ranmid|ranEAID|ascsubtag|subid|sub_id|campid|mkevt|partnerid|zanpid|utm_medium)$/i;
+const AFFILIATE_HOSTS = /(^|\.)(amzn\.to|amzn\.eu|tidd\.ly|awin1\.com|prf\.hn|go\.skimresources\.com|click\.linksynergy\.com|anrdoezrs\.net|dpbolvw\.net|shareasale\.com|ebay\.us|bit\.ly\/deal)$/i;
+const PROMO_PATHS = /\/(bons?-plans?|deals?|promos?|soldes|codes?-promo|angebote|ofertas|offerte|shopping|coupons?)(\/|-|$)/i;
+
+export interface PromoVerdict { promo: boolean; reasons: string[] }
+
+/**
+ * A promotion or a deal rather than news: deal words, a price with a discount, an affiliate link, a deal
+ * section of the site, or a source whose category is a deal one. Two weak hints are needed for a word
+ * that also means news; one strong hint is enough.
+ */
+export function promoVerdict(title: string, rawUrl: string, sourceCategory = '', promoCategories: string[] = ['deals', 'promo', 'shopping', 'bons-plans']): PromoVerdict {
+  const reasons: string[] = [];
+  const t = ` ${title.normalize('NFKD').replace(/\p{M}/gu, '').toLowerCase().replace(/['’`]/g, ' ')} `;
+  const words = new Set(t.split(/[^\p{L}\p{N}%]+/u).filter(Boolean));
+  const phrase = PROMO_PHRASES.find((p) => t.includes(` ${p} `) || t.includes(` ${p}:`) || t.includes(` ${p},`));
+  if (phrase) reasons.push(`words: ${phrase}`);
+  const strong = [...words].find((w) => PROMO_SINGLE.has(w) && !WEAK.has(w));
+  if (strong) reasons.push(`word: ${strong}`);
+  const weak = [...words].find((w) => WEAK.has(w));
+  const price = PRICE.test(title), discount = DISCOUNT.test(title);
+  if (price && discount) reasons.push('price with a discount');
+  else if (discount && /%/.test(title) && (weak || strong)) reasons.push('discount');
+  let url: URL | undefined;
+  try { url = new URL(rawUrl); } catch { /* not a URL */ }
+  if (url) {
+    const params = [...url.searchParams.keys()].filter((k) => AFFILIATE_PARAMS.test(k) && !(k.toLowerCase() === 'utm_medium' && !/affil|partner/i.test(url!.searchParams.get(k) ?? '')));
+    if (params.length) reasons.push(`affiliate link: ${params.join(', ')}`);
+    if (AFFILIATE_HOSTS.test(url.hostname)) reasons.push(`affiliate host: ${url.hostname}`);
+    if (PROMO_PATHS.test(url.pathname)) reasons.push('deal section of the site');
+  }
+  if (promoCategories.includes(sourceCategory)) reasons.push(`source category: ${sourceCategory}`);
+  if (weak && !reasons.length && price) reasons.push(`word: ${weak} with a price`);
+  return { promo: reasons.length > 0, reasons };
+}
+
 export interface RawItem { url: string; title: string; publishedAt?: string; outlet?: string; language?: string; country?: string }
 
-export function normalizeItem(item: RawItem, source: Source, collectedAt: string, keywords?: Record<string, string[]>): Article | undefined {
+export function normalizeItem(item: RawItem, source: Source, collectedAt: string, keywords?: Record<string, string[]>, promoCategories?: string[]): Article | undefined {
   const title = decodeEntities(item.title ?? '');
   if (!item.url || !title) return undefined;
   const url = canonicalUrl(item.url);
@@ -116,5 +167,6 @@ export function normalizeItem(item: RawItem, source: Source, collectedAt: string
     official: !!source.official,
     tokens: tokenize(stripLabel(title)),
     entities: entities(title),
+    promo: promoVerdict(title, item.url, source.category, promoCategories).promo,
   };
 }

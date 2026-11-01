@@ -1,7 +1,8 @@
-// Grouping articles into events, without ML: title shingles + Jaccard, entity overlap, a time window.
-// The Similarity interface is the plug for embeddings later (cosine of title vectors, same contract).
+// Grouping articles into events. Default backend, without ML: title shingles + Jaccard, entity overlap,
+// a time window. Embedding backend (src/embed.ts): cosine of multilingual title vectors, combined with
+// the entity overlap and the time distance, behind the same Similarity contract.
 
-export interface Signature { tokens: string[]; entities: string[]; at: string }
+export interface Signature { tokens: string[]; entities: string[]; at: string; vector?: Float32Array }
 
 export interface Similarity {
   readonly name: string;
@@ -36,13 +37,44 @@ export const lexicalSimilarity: Similarity = {
   score(a, b) {
     const sh = jaccard(shingles(a.tokens), shingles(b.tokens));
     const tok = jaccard(new Set(a.tokens), new Set(b.tokens));
-    const ent = overlap(new Set(a.entities), new Set(b.entities));
     // Two shared entities are a strong hint (e.g. "ECB" + "Lagarde"); one alone ("Black Friday") is weak.
-    const entInter = a.entities.filter((e) => b.entities.includes(e)).length;
-    const entScore = entInter >= 2 ? ent : ent * 0.4;
-    return Math.max(sh, 0.55 * tok + 0.45 * entScore);
+    return Math.max(sh, 0.55 * tok + 0.45 * entityScore(a, b));
   },
 };
+
+export function cosine(a: Float32Array, b: Float32Array): number {
+  let dot = 0, na = 0, nb = 0;
+  for (let i = 0; i < a.length; i++) { dot += a[i]! * b[i]!; na += a[i]! * a[i]!; nb += b[i]! * b[i]!; }
+  return na && nb ? dot / Math.sqrt(na * nb) : 0;
+}
+
+/** Shared entities, 0 to 1: two shared entities count fully, one alone counts for less. */
+export function entityScore(a: Signature, b: Signature): number {
+  const ent = overlap(new Set(a.entities), new Set(b.entities));
+  const inter = a.entities.filter((e) => b.entities.includes(e)).length;
+  return inter >= 2 ? ent : ent * 0.4;
+}
+
+/**
+ * Semantic similarity: the cosine of the title vectors (a paraphrase or a translation scores high), plus
+ * a bonus for shared entities, minus a small penalty for the time distance. Without vectors on both
+ * sides it falls back to the lexical score. [name] carries the model, so the vectors stay comparable.
+ */
+export function embeddingSimilarity(model: string, opts: { windowHours?: number; entityWeight?: number; timePenalty?: number } = {}): Similarity & { model: string } {
+  const windowMs = (opts.windowHours ?? 48) * 3_600_000;
+  const we = opts.entityWeight ?? 0.15, wt = opts.timePenalty ?? 0.05;
+  return {
+    name: `embedding:${model}`, model,
+    score(a, b) {
+      if (!a.vector || !b.vector || a.vector.length !== b.vector.length) return lexicalSimilarity.score(a, b);
+      const cos = cosine(a.vector, b.vector);
+      const dt = Math.min(1, Math.abs(Date.parse(a.at) - Date.parse(b.at)) / windowMs);
+      const s = cos + we * entityScore(a, b) - wt * dt;
+      // The same phrasing stays a strong hint whatever the model says.
+      return Math.max(Math.min(1, s), jaccard(shingles(a.tokens), shingles(b.tokens)));
+    },
+  };
+}
 
 export interface Candidate { eventId: string; members: Signature[] }
 
@@ -51,16 +83,22 @@ export interface Candidate { eventId: string; members: Signature[] }
  * the threshold; undefined means "start a new event".
  */
 export function assign(article: Signature, candidates: Candidate[], opts: { threshold: number; windowHours: number; similarity?: Similarity }): { eventId: string; score: number } | undefined {
+  return matches(article, candidates, opts)[0];
+}
+
+/** Every event the article matches (best score per event, above the threshold), best first. */
+export function matches(article: Signature, candidates: Candidate[], opts: { threshold: number; windowHours: number; similarity?: Similarity }): { eventId: string; score: number }[] {
   const sim = opts.similarity ?? lexicalSimilarity;
   const t = Date.parse(article.at);
   const windowMs = opts.windowHours * 3_600_000;
-  let best: { eventId: string; score: number } | undefined;
+  const out: { eventId: string; score: number }[] = [];
   for (const c of candidates) {
+    let best = -1;
     for (const m of c.members) {
       if (Math.abs(Date.parse(m.at) - t) > windowMs) continue;
-      const score = sim.score(article, m);
-      if (score >= opts.threshold && (!best || score > best.score)) best = { eventId: c.eventId, score };
+      best = Math.max(best, sim.score(article, m));
     }
+    if (best >= opts.threshold) out.push({ eventId: c.eventId, score: best });
   }
-  return best;
+  return out.sort((a, b) => b.score - a.score);
 }

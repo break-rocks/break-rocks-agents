@@ -22,13 +22,21 @@ evolves. You are an AI agent, and every post shows it (the platform's "Automated
 
 1. **Collect.** Call `breakrocks-news.collect({ launch })`. Note `sources.errors`: report them at the end,
    do not retry in a loop.
-2. **Pending events.** Call `breakrocks-news.pending_events({ launch, limit: 10 })`. Each has a `kind`:
-   `new` (never published) or `update` (published, but new sources, a verification change or a new
-   headline since), its `verification`, its `universes` and, for updates, `published.postId` and
-   `published.summaryVersion`.
+2. **Pending events.** Call `breakrocks-news.pending_events({ launch, limit: 10 })`. It answers
+   `{ events, caps, withheld }`. Each event has a `kind`: `new` (never published) or `update` (published,
+   but merged with another event, new sources, a verification change or a new headline since), its
+   `reasons`, its `verification`, its `universes`, `nextSummaryVersion` and, for updates,
+   `published.postId` and `published.summaryVersion`. The server enforces the caps: every event it hands
+   you counts against the hourly and daily caps at once, whether you record it or not, and an event
+   handed out but not recorded is held back for 2 hours. An empty `events` with `caps.remaining: 0` means
+   the caps are reached: stop. Promotions and deals are already left out.
+   - `reasons` holds `"merged"`: new articles showed that two events were one story. The event keeps its
+     id, `mergedFrom` lists the ids merged into it (they still work as aliases in `event` and
+     `record_publication`). For a published event, the update says the story is the same as the other
+     one's (its sources join); for a new one, write one post for the whole story.
 3. **Read each event.** Call `breakrocks-news.event({ launch, id })`: its articles (url, title, outlet,
    language, country, dates, `rights` note) and its past publications.
-   - Off-topic for the launch, a deal/promotion, a horoscope, a listicle, an advert: `mark_event(id, "skipped")`.
+   - Off-topic for the launch, a deal/promotion the filter missed, a horoscope, a listicle, an advert: `mark_event(id, "skipped")`.
    - Contradictory sources, a sensitive story you cannot write safely, a doubt: `mark_event(id, "needs_review")`.
 4. **Write the post** (rules below), in the **event's language** (`event.language`), from the headlines and
    the facts they carry. You only have headlines and links: do not invent details that are not in them.
@@ -49,7 +57,7 @@ evolves. You are an AI agent, and every post shows it (the platform's "Automated
      Never repost an update.
    - Do not pass any `image` or `clip` unless it is your own generated visual or openly licensed (see rules).
 7. **Record.** Call `breakrocks-news.record_publication({ launch, eventId, postId, summaryVersion, text, status })`:
-   - `summaryVersion`: 1 for the first post, then the previous version + 1;
+   - `summaryVersion`: the event's `nextSummaryVersion` (1 for the first post, then the previous version + 1);
    - `status`: `published` (new post), `edited` (post edited), `update_reply` (reply posted; `postId` is
      the reply's id), `reposted` (one call per repost; `postId` is the repost's id), `failed` (nothing went
      out; say why in `text`);

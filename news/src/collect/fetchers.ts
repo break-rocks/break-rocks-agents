@@ -4,7 +4,7 @@ import { outletOf, type RawItem } from '../normalize.js';
 import type { SourceState } from '../store.js';
 import type { Source } from '../types.js';
 
-export interface FetchResult { status: number; notModified: boolean; body?: string; etag?: string; lastModified?: string }
+export interface FetchResult { status: number; notModified: boolean; body?: string; etag?: string; lastModified?: string; retryAfter?: string }
 
 export type Fetcher = (url: string, headers: Record<string, string>) => Promise<{ status: number; headers: Headers; arrayBuffer: () => Promise<ArrayBuffer> }>;
 
@@ -23,7 +23,7 @@ export async function conditionalGet(url: string, state: SourceState, userAgent:
   if (state.lastModified) headers['If-Modified-Since'] = state.lastModified;
   const res = await fetcher(url, headers);
   if (res.status === 304) return { status: 304, notModified: true, etag: state.etag, lastModified: state.lastModified };
-  if (res.status >= 400) return { status: res.status, notModified: false };
+  if (res.status >= 400) return { status: res.status, notModified: false, retryAfter: res.headers.get('retry-after') ?? undefined };
   return { status: res.status, notModified: false, body: decodeBody(await res.arrayBuffer(), res.headers.get('content-type')), etag: res.headers.get('etag') ?? undefined, lastModified: res.headers.get('last-modified') ?? undefined };
 }
 
@@ -73,6 +73,9 @@ export function gdeltUrl(source: Source): string {
   u.searchParams.set('sort', 'datedesc');
   return u.toString();
 }
+
+/** GDELT sometimes answers its rate limit with a 200 and a plain-text message instead of a 429. */
+export const isGdeltRateLimit = (body: string) => !body.trimStart().startsWith('{') && /limit requests|too many requests|rate limit/i.test(body.slice(0, 500));
 
 export function parseGdelt(body: string): RawItem[] {
   let doc: { articles?: { url: string; title: string; seendate?: string; domain?: string; language?: string; sourcecountry?: string }[] };

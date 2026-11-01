@@ -2,9 +2,9 @@
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { z } from 'zod';
 import { listLaunches, loadLaunch } from './config.js';
-import { collect, eventDetail, markEvent, pendingEvents, recordPublication, saveDraft } from './service.js';
+import { collect, eventDetail, markEvent, pendingForAi, recordPublication, saveDraft } from './service.js';
 
-const VERSION = '0.1.0';
+const VERSION = '0.3.0';
 
 const ok = (value: unknown) => ({ content: [{ type: 'text' as const, text: JSON.stringify(value, null, 2) }] });
 const wrap = <A,>(fn: (args: A) => unknown | Promise<unknown>) => async (args: A) => {
@@ -30,13 +30,13 @@ export function createServer(): McpServer {
   }, wrap(({ launch: name, force }: { launch: string; force?: boolean }) => collect(loadLaunch(name), { force })));
 
   server.registerTool('pending_events', {
-    title: 'Events to publish or update', description: 'Events ready to publish (kind new) or whose post needs an update (kind update: new sources, verification or headline change), with their destination universes.',
+    title: 'Events to publish or update', description: 'Events ready to publish (kind new) or whose post needs an update (kind update: merged with another event, new sources, verification or headline change), with their destination universes. Promotions are left out. With an agent block, the server enforces the hourly and daily caps: each event returned counts against them right away, and an event returned but not recorded is held back for 2 hours. Returns { events, caps, withheld }.',
     inputSchema: { launch, limit: z.number().int().min(1).max(200).optional().describe('Default 20') },
-  }, wrap(({ launch: name, limit }: { launch: string; limit?: number }) => pendingEvents(loadLaunch(name), limit ?? 20)));
+  }, wrap(({ launch: name, limit }: { launch: string; limit?: number }) => pendingForAi(loadLaunch(name), limit ?? 20)));
 
   server.registerTool('event', {
     title: 'An event', description: 'An event with its articles (url, title, outlet, language, country, dates, reuse rights note) and its publication history.',
-    inputSchema: { launch, id: z.string().describe('The event id (ev_...)') },
+    inputSchema: { launch, id: z.string().describe('The event id (ev_...), or the id of an event merged into it') },
   }, wrap(({ launch: name, id }: { launch: string; id: string }) => eventDetail(loadLaunch(name), id)));
 
   server.registerTool('record_publication', {

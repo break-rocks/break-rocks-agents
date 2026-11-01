@@ -90,7 +90,7 @@ export function buildConfig(a: StartAnswers, sources: Source[]) {
     themes: [...a.themes],
     universes: { default: a.universes[a.themes[0]!]!, byCategory },
     verification: { minOutlets: 2, sensitiveCategories: ['crime_justice', 'politics'], publishUnconfirmed: a.verification === 'to_confirm' },
-    clustering: { threshold: 0.34, windowHours: 48 },
+    clustering: { backend: 'lexical', threshold: 0.34, windowHours: 48, mergeThreshold: 0.5 },
     collect: { maxAgeHours: 48, concurrency: 6 },
     schedule: cronOf(a.every),
     agent,

@@ -18,7 +18,7 @@ export type Readiness = { kind: 'new' | 'update'; reasons: string[] } | { kind: 
 /**
  * What the AI should do with an event now:
  * - new: never published and ready (sensitive categories need corroboration; single source only if allowed);
- * - update: published, and new independent outlets, a verification change or a materially different title since;
+ * - update: published, and merged with another event, new independent outlets, a verification change or a materially different title since;
  * - wait: not ready yet; none: nothing to do (skipped, needs_review, or up to date).
  */
 export function readiness(event: NewsEvent, config: Pick<LaunchConfig, 'verification'>): Readiness {
@@ -26,9 +26,10 @@ export function readiness(event: NewsEvent, config: Pick<LaunchConfig, 'verifica
   if (!event.published) {
     if (event.sensitive && event.verification !== 'corroborated') return { kind: 'wait', reasons: ['sensitive category: needs corroboration'] };
     if (event.verification === 'to_confirm' && !config.verification.publishUnconfirmed) return { kind: 'wait', reasons: ['single source: publishUnconfirmed is false'] };
-    return { kind: 'new', reasons: [event.verification] };
+    return { kind: 'new', reasons: [event.verification, ...(event.mergedFrom?.length ? ['merged'] : [])] };
   }
   const reasons: string[] = [];
+  if (event.mergedFrom?.length) reasons.push('merged');
   const newOutlets = event.outlets.filter((o) => !event.published!.outlets.includes(o));
   if (newOutlets.length) reasons.push(`new sources: ${newOutlets.join(', ')}`);
   if (event.verification !== event.published.verification) reasons.push(`verification: ${event.published.verification} -> ${event.verification}`);

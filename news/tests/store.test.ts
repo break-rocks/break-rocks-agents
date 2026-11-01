@@ -78,7 +78,7 @@ describe('store and event life cycle', () => {
     };
     const now = new Date('2026-11-01T09:00:00Z');
     const r1 = await collect(launch, { fetcher, now });
-    expect(r1.articles).toEqual({ seen: 1, added: 1 });
+    expect(r1.articles).toEqual({ seen: 1, added: 1, promo: 0 });
     const r2 = await collect(launch, { fetcher, now: new Date('2026-11-01T09:10:00Z') });
     expect(r2.sources.notDue).toBe(1);
     const r3 = await collect(launch, { fetcher, now: new Date('2026-11-01T10:30:00Z') });

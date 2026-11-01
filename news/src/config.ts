@@ -7,6 +7,11 @@ import { parse } from 'yaml';
 import { z } from 'zod';
 import type { Launch, LaunchConfig, Source } from './types.js';
 
+/** Local model: Apache-2.0, 50+ languages, 384 dimensions, trained for paraphrases. */
+export const DEFAULT_LOCAL_MODEL = 'Xenova/paraphrase-multilingual-MiniLM-L12-v2';
+export const LEXICAL_DEFAULTS = { threshold: 0.34, mergeThreshold: 0.5 };
+export const EMBEDDING_DEFAULTS = { threshold: 0.75, mergeThreshold: 0.83 };
+
 const configSchema = z.object({
   description: z.string().default(''),
   languages: z.array(z.string()).min(1),
@@ -21,7 +26,31 @@ const configSchema = z.object({
     sensitiveCategories: z.array(z.string()).default(['crime_justice', 'politics']),
     publishUnconfirmed: z.boolean().default(true),
   }).prefault({}),
-  clustering: z.object({ threshold: z.number().min(0).max(1).default(0.34), windowHours: z.number().positive().default(48) }).prefault({}),
+  clustering: z.object({
+    backend: z.enum(['lexical', 'embedding']).default('lexical'),
+    threshold: z.number().min(0).max(1).optional(),
+    windowHours: z.number().positive().default(48),
+    mergeThreshold: z.number().min(0).max(1).optional(),
+    embedding: z.object({
+      provider: z.enum(['local', 'openai', 'ollama']).default('local'),
+      model: z.string().default(DEFAULT_LOCAL_MODEL),
+      url: z.string().url().optional(),
+      apiKeyEnv: z.string().regex(/^[A-Z_][A-Z0-9_]*$/).optional(),
+      prefix: z.string().optional(),
+      batchSize: z.number().int().min(1).max(256).default(32),
+    }).optional(),
+  }).prefault({}).transform((c) => {
+    const d = c.backend === 'embedding' ? EMBEDDING_DEFAULTS : LEXICAL_DEFAULTS;
+    return { ...c, threshold: c.threshold ?? d.threshold, mergeThreshold: c.mergeThreshold ?? d.mergeThreshold, embedding: c.backend === 'embedding' ? c.embedding ?? { provider: 'local' as const, model: DEFAULT_LOCAL_MODEL, batchSize: 32 } : c.embedding };
+  }),
+  filters: z.object({ keepPromo: z.boolean().default(false), promoCategories: z.array(z.string()).default(['deals', 'promo', 'shopping', 'bons-plans']) }).prefault({}),
+  retention: z.object({ articlesDays: z.number().positive().default(30), eventsDays: z.number().positive().default(180), logsDays: z.number().positive().default(30) }).prefault({}),
+  politeness: z.object({
+    gdeltMinFrequency: z.string().regex(/^\d+[mhd]$/).default('1h'),
+    disableAfter429: z.number().int().min(1).default(3),
+    disableHours: z.number().positive().default(24),
+    cacheMinutes: z.number().min(0).default(15),
+  }).prefault({}),
   collect: z.object({
     maxAgeHours: z.number().positive().default(72),
     concurrency: z.number().int().min(1).max(16).default(6),

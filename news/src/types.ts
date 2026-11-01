@@ -39,7 +39,13 @@ export interface LaunchConfig {
     /** Whether a single-source, non-sensitive event may be published (marked to_confirm). */
     publishUnconfirmed: boolean;
   };
-  clustering: { threshold: number; windowHours: number };
+  clustering: ClusteringSettings;
+  /** Promotions and deals: marked `promo` and kept out of pending_events unless keepPromo. */
+  filters?: { keepPromo: boolean; promoCategories: string[] };
+  /** Purge of old data (run at most once a day by collect, or `breakrocks-news purge`). */
+  retention?: { articlesDays: number; eventsDays: number; logsDays: number };
+  /** Per-source politeness: backoff after 429, GDELT cadence and automatic disabling. */
+  politeness?: { gdeltMinFrequency: string; disableAfter429: number; disableHours: number; cacheMinutes: number };
   collect: { maxAgeHours: number; concurrency: number; userAgent: string };
   /** How often the user's AI should run the loop (cron expression, informative). */
   schedule: string;
@@ -47,6 +53,29 @@ export interface LaunchConfig {
   categoryKeywords?: Record<string, string[]>;
   /** The autonomous loop (`breakrocks-news start` / `run`): absent on hand-written launches. */
   agent?: AgentSettings;
+}
+
+export interface EmbeddingSettings {
+  /** local: transformers.js (optional dependency); openai: an OpenAI-compatible /embeddings; ollama: /api/embed. */
+  provider: 'local' | 'openai' | 'ollama';
+  model: string;
+  /** Endpoint base URL (openai, ollama). */
+  url?: string;
+  /** Name of the environment variable holding the API key (openai); the key is never stored. */
+  apiKeyEnv?: string;
+  /** Text put before each title (e5 models: "query: "). */
+  prefix?: string;
+  batchSize: number;
+}
+
+export interface ClusteringSettings {
+  /** lexical (default, no dependency) or embedding (semantic, multilingual). */
+  backend: 'lexical' | 'embedding';
+  threshold: number;
+  windowHours: number;
+  /** A new article scoring at least this against two open events merges them. */
+  mergeThreshold: number;
+  embedding?: EmbeddingSettings;
 }
 
 export interface AgentSettings {
@@ -88,6 +117,8 @@ export interface Article {
   /** Normalised title tokens and capitalised entities, for clustering. */
   tokens: string[];
   entities: string[];
+  /** A promotion or deal (keywords, prices, affiliate links, source category). */
+  promo?: boolean;
 }
 
 export type Verification = 'to_confirm' | 'corroborated';
@@ -106,6 +137,10 @@ export interface NewsEvent {
   verification: Verification;
   articleCount: number;
   outlets: string[];
+  /** Most of its articles are promotions: kept out of pending_events unless filters.keepPromo. */
+  promo?: boolean;
+  /** Events merged into this one since its last publication or draft (their ids stay aliases). */
+  mergedFrom?: string[];
   /** Snapshot taken by record_publication: what the last post was based on. */
   published?: { postId: string; summaryVersion: number; outlets: string[]; verification: Verification; title: string; at: string };
 }
