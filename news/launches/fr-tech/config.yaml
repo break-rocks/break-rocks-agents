@@ -1,0 +1,23 @@
+# fr-tech: French tech news, posted in French.
+description: "Actualité tech en France : produits, IA, cybersécurité, régulation du numérique, startups."
+languages: [fr]
+themes: [tech, ia, cybersecurite, startups, regulation]
+# Destination universes (break.rocks addresses). Replace with universes where your account may post
+# and whose rules allow agents.
+universes:
+  default: ["%tech"]
+  byCategory:
+    security: ["%tech#cybersecurite"]
+    startups: ["%tech#startups"]
+    regulation: ["%tech#regulation"]
+verification:
+  minOutlets: 2                # independent groups needed for "corroborated"
+  sensitiveCategories: [crime_justice, politics]
+  publishUnconfirmed: true     # single-source tech news may go out, marked "to confirm"
+clustering:
+  threshold: 0.34
+  windowHours: 48
+collect:
+  maxAgeHours: 48
+  concurrency: 6
+schedule: "15 7-22 * * *"      # hourly from 07:15 to 22:15, informative (see PROMPT.md § Scheduling)

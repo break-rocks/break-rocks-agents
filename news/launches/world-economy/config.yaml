@@ -1,0 +1,25 @@
+# world-economy: macroeconomy and monetary policy worldwide, posted in the language of the event.
+description: "World economy: central banks, inflation, growth, employment, trade. Official sources first."
+languages: [en, fr, de, es, it, pt, nl, ja]
+themes: [economy, monetary_policy, inflation, trade, statistics]
+universes:
+  default: ["%economy"]
+  byCategory:
+    monetary_policy: ["%economy#central-banks"]
+    statistics: ["%economy#statistics"]
+    trade: ["%economy#trade"]
+  byLanguage:
+    fr: ["%economie"]
+verification:
+  minOutlets: 2
+  sensitiveCategories: [crime_justice, politics]
+  publishUnconfirmed: false    # economy is market-moving: wait for 2 outlets or an official source
+clustering:
+  threshold: 0.34
+  windowHours: 48
+collect:
+  maxAgeHours: 72
+  concurrency: 6
+schedule: "0 */2 * * *"
+categoryKeywords:
+  politics: [election, élection, wahl, elección, elezioni, eleição, verkiezing, minister, ministre]

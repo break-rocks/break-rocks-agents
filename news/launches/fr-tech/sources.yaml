@@ -1,0 +1,276 @@
+# fr-tech: French-language tech news. Every feed was reachable on 2026-11-01.
+# rights: an honest note, not legal advice. Default rule for the press: links + own summary only.
+# Les Echos (403 to bots) and Le Big Data (403) were left out.
+sources:
+  - id: lemonde-pixels
+    name: "Le Monde"
+    type: rss
+    url: "https://www.lemonde.fr/pixels/rss_full.xml"
+    country: FR
+    language: fr
+    category: tech
+    frequency: 1h
+    group: "Groupe Le Monde"
+    rights: "Copyrighted press content (all rights reserved). Use only the link, the outlet name and your own factual summary; never copy text or images. Feed terms not reviewed for commercial reuse."
+  - id: numerama
+    name: "Numerama"
+    type: rss
+    url: "https://www.numerama.com/feed/"
+    country: FR
+    language: fr
+    category: tech
+    frequency: 1h
+    group: "Humanoid"
+    rights: "Copyrighted press content (all rights reserved). Use only the link, the outlet name and your own factual summary; never copy text or images. Feed terms not reviewed for commercial reuse."
+  - id: frandroid
+    name: "Frandroid"
+    type: rss
+    url: "https://www.frandroid.com/feed"
+    country: FR
+    language: fr
+    category: tech
+    frequency: 1h
+    group: "Humanoid"
+    rights: "Copyrighted press content (all rights reserved). Use only the link, the outlet name and your own factual summary; never copy text or images. Feed terms not reviewed for commercial reuse."
+  - id: 01net
+    name: "01net"
+    type: rss
+    url: "https://www.01net.com/actualites/feed/"
+    country: FR
+    language: fr
+    category: tech
+    frequency: 1h
+    group: "Keleops"
+    rights: "Copyrighted press content (all rights reserved). Use only the link, the outlet name and your own factual summary; never copy text or images. Feed terms not reviewed for commercial reuse."
+  - id: journaldugeek
+    name: "Journal du Geek"
+    type: rss
+    url: "https://www.journaldugeek.com/feed/"
+    country: FR
+    language: fr
+    category: tech
+    frequency: 1h
+    group: "Keleops"
+    rights: "Copyrighted press content (all rights reserved). Use only the link, the outlet name and your own factual summary; never copy text or images. Feed terms not reviewed for commercial reuse."
+  - id: next
+    name: "Next"
+    type: rss
+    url: "https://next.ink/feed/"
+    country: FR
+    language: fr
+    category: tech
+    frequency: 1h
+    rights: "Copyrighted press content (all rights reserved). Use only the link, the outlet name and your own factual summary; never copy text or images. Feed terms not reviewed for commercial reuse."
+  - id: clubic
+    name: "Clubic"
+    type: rss
+    url: "https://www.clubic.com/feed/news.rss"
+    country: FR
+    language: fr
+    category: tech
+    frequency: 1h
+    group: "Groupe Clubic"
+    rights: "Copyrighted press content (all rights reserved). Use only the link, the outlet name and your own factual summary; never copy text or images. Feed terms not reviewed for commercial reuse."
+  - id: lesnumeriques
+    name: "Les Numériques"
+    type: rss
+    url: "https://www.lesnumeriques.com/rss.xml"
+    country: FR
+    language: fr
+    category: tech
+    frequency: 1h
+    group: "Ziff Davis France"
+    rights: "Copyrighted press content (all rights reserved). Use only the link, the outlet name and your own factual summary; never copy text or images. Feed terms not reviewed for commercial reuse."
+  - id: zdnet-fr
+    name: "ZDNet France"
+    type: rss
+    url: "https://www.zdnet.fr/feeds/rss/actualites/"
+    country: FR
+    language: fr
+    category: tech
+    frequency: 1h
+    group: "Ziff Davis France"
+    rights: "Copyrighted press content (all rights reserved). Use only the link, the outlet name and your own factual summary; never copy text or images. Feed terms not reviewed for commercial reuse."
+  - id: siecledigital
+    name: "Siècle Digital"
+    type: rss
+    url: "https://siecledigital.fr/feed/"
+    country: FR
+    language: fr
+    category: tech
+    frequency: 1h
+    rights: "Copyrighted press content (all rights reserved). Use only the link, the outlet name and your own factual summary; never copy text or images. Feed terms not reviewed for commercial reuse."
+  - id: bfm-tech
+    name: "BFM Tech&Co"
+    type: rss
+    url: "https://www.bfmtv.com/rss/tech/"
+    country: FR
+    language: fr
+    category: tech
+    frequency: 1h
+    group: "RMC BFM"
+    rights: "Copyrighted press content (all rights reserved). Use only the link, the outlet name and your own factual summary; never copy text or images. Feed terms not reviewed for commercial reuse."
+  - id: korben
+    name: "Korben"
+    type: rss
+    url: "https://korben.info/feed"
+    country: FR
+    language: fr
+    category: tech
+    frequency: 3h
+    rights: "Copyrighted press content (all rights reserved). Use only the link, the outlet name and your own factual summary; never copy text or images. Feed terms not reviewed for commercial reuse."
+  - id: lemagit
+    name: "LeMagIT"
+    type: rss
+    url: "https://www.lemagit.fr/rss/ContentSyndication.xml"
+    country: FR
+    language: fr
+    category: tech
+    frequency: 1h
+    group: "TechTarget"
+    rights: "Copyrighted press content (all rights reserved). Use only the link, the outlet name and your own factual summary; never copy text or images. Feed terms not reviewed for commercial reuse."
+  - id: usine-digitale
+    name: "L'Usine Digitale"
+    type: rss
+    url: "https://www.usine-digitale.fr/rss"
+    country: FR
+    language: fr
+    category: tech
+    frequency: 2h
+    group: "Infopro Digital"
+    rights: "Copyrighted press content (all rights reserved). Use only the link, the outlet name and your own factual summary; never copy text or images. Feed terms not reviewed for commercial reuse."
+  - id: presse-citron
+    name: "Presse-citron"
+    type: rss
+    url: "https://www.presse-citron.net/feed/"
+    country: FR
+    language: fr
+    category: tech
+    frequency: 1h
+    rights: "Copyrighted press content (all rights reserved). Use only the link, the outlet name and your own factual summary; never copy text or images. Feed terms not reviewed for commercial reuse."
+  - id: maddyness
+    name: "Maddyness"
+    type: rss
+    url: "https://www.maddyness.com/feed/"
+    country: FR
+    language: fr
+    category: startups
+    frequency: 2h
+    rights: "Copyrighted press content (all rights reserved). Use only the link, the outlet name and your own factual summary; never copy text or images. Feed terms not reviewed for commercial reuse."
+  - id: frenchweb
+    name: "FrenchWeb"
+    type: rss
+    url: "https://www.frenchweb.fr/feed"
+    country: FR
+    language: fr
+    category: startups
+    frequency: 2h
+    rights: "Copyrighted press content (all rights reserved). Use only the link, the outlet name and your own factual summary; never copy text or images. Feed terms not reviewed for commercial reuse."
+  - id: journaldunet
+    name: "Journal du Net"
+    type: rss
+    url: "https://www.journaldunet.com/rss/"
+    country: FR
+    language: fr
+    category: tech
+    frequency: 1h
+    group: "CCM Benchmark (Figaro)"
+    rights: "Copyrighted press content (all rights reserved). Use only the link, the outlet name and your own factual summary; never copy text or images. Feed terms not reviewed for commercial reuse."
+  - id: lemondeinformatique
+    name: "Le Monde Informatique"
+    type: rss
+    url: "https://www.lemondeinformatique.fr/flux-rss/thematique/toutes-les-actualites/rss.xml"
+    country: FR
+    language: fr
+    category: tech
+    frequency: 1h
+    group: "IT News Info"
+    rights: "Copyrighted press content (all rights reserved). Use only the link, the outlet name and your own factual summary; never copy text or images. Feed terms not reviewed for commercial reuse."
+  - id: begeek
+    name: "BeGeek"
+    type: rss
+    url: "https://www.begeek.fr/feed"
+    country: FR
+    language: fr
+    category: tech
+    frequency: 3h
+    rights: "Copyrighted press content (all rights reserved). Use only the link, the outlet name and your own factual summary; never copy text or images. Feed terms not reviewed for commercial reuse."
+  - id: franceinfo-internet
+    name: "franceinfo"
+    type: rss
+    url: "https://www.francetvinfo.fr/internet.rss"
+    country: FR
+    language: fr
+    category: tech
+    frequency: 1h
+    group: "France Télévisions"
+    rights: "Copyrighted press content (all rights reserved). Use only the link, the outlet name and your own factual summary; never copy text or images. Feed terms not reviewed for commercial reuse."
+  - id: figaro-hightech
+    name: "Le Figaro"
+    type: rss
+    url: "https://www.lefigaro.fr/rss/figaro_secteur_high-tech.xml"
+    country: FR
+    language: fr
+    category: tech
+    frequency: 1h
+    group: "Groupe Figaro"
+    rights: "Copyrighted press content (all rights reserved). Use only the link, the outlet name and your own factual summary; never copy text or images. Feed terms not reviewed for commercial reuse."
+  - id: 20minutes-hightech
+    name: "20 Minutes"
+    type: rss
+    url: "https://www.20minutes.fr/feeds/rss-high-tech.xml"
+    country: FR
+    language: fr
+    category: tech
+    frequency: 1h
+    group: "20 Minutes (Rossel/Ouest-France)"
+    rights: "Copyrighted press content (all rights reserved). Use only the link, the outlet name and your own factual summary; never copy text or images. Feed terms not reviewed for commercial reuse."
+  - id: france24-ecotech
+    name: "France 24"
+    type: rss
+    url: "https://www.france24.com/fr/%C3%A9co-tech/rss"
+    country: FR
+    language: fr
+    category: tech
+    frequency: 1h
+    group: "France Médias Monde"
+    rights: "Copyrighted press content (all rights reserved). Use only the link, the outlet name and your own factual summary; never copy text or images. Feed terms not reviewed for commercial reuse."
+  - id: cnil
+    name: "CNIL"
+    type: rss
+    url: "https://www.cnil.fr/fr/rss.xml"
+    country: FR
+    language: fr
+    category: regulation
+    frequency: 6h
+    official: true
+    rights: "Official French authority. cnil.fr content is published under Licence Ouverte / Etalab 2.0 per its legal notice (verify): reuse with attribution and date; logos and third-party images excluded."
+  - id: cert-fr
+    name: "CERT-FR (ANSSI)"
+    type: rss
+    url: "https://www.cert.ssi.gouv.fr/feed/"
+    country: FR
+    language: fr
+    category: security
+    frequency: 3h
+    official: true
+    rights: "Official French government CERT. Its site states reuse under Licence Ouverte / Etalab 2.0 (verify): attribution required; link the advisory."
+  - id: hackernews
+    name: "Hacker News"
+    type: hackernews
+    url: "https://hn.algolia.com/api/v1/search?tags=front_page"
+    country: US
+    language: en
+    category: tech
+    frequency: 1h
+    rights: "Public Algolia HN Search API, no key. Only titles and links are used; each link points to a third-party site with its own rights. Not counted as one outlet: each link counts as its own domain."
+  - id: gdelt-fr-tech
+    name: "GDELT (French tech)"
+    type: gdelt
+    url: "https://api.gdeltproject.org/api/v2/doc/doc"
+    query: "(technologie OR \"intelligence artificielle\" OR cybersécurité OR startup) sourcelang:french"
+    country: FR
+    language: fr
+    category: tech
+    frequency: 2h
+    rights: "GDELT DOC 2.0 API, open data with attribution to the GDELT Project; max one request every 5 s. Linked articles keep their publishers' rights: link and own summary only."

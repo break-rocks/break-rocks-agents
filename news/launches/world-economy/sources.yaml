@@ -1,0 +1,340 @@
+# world-economy: macroeconomy and monetary policy, 8 languages (en, fr, de, es, it, pt, nl, ja).
+# Every feed was reachable on 2026-11-01. rights: an honest note, not legal advice.
+# Left out: IMF and OECD (403 to bots), Les Echos (403), Banque de France (403), elEconomista (403).
+# Eurostat publishes no news-release RSS (only a dataset-update feed: ec.europa.eu/eurostat/api/dissemination/catalogue/rss/en/statistics-update.rss,
+# too noisy for events); its releases reach this launch through the press and GDELT.
+sources:
+  - id: ecb-press
+    name: "European Central Bank"
+    type: rss
+    url: "https://www.ecb.europa.eu/rss/press.html"
+    country: EU
+    language: en
+    category: monetary_policy
+    frequency: 1h
+    group: "ECB"
+    official: true
+    rights: "Official. ECB copyright notice allows reproduction with the source acknowledged, except where stated otherwise (verify); no photos."
+  - id: ecb-statpress
+    name: "European Central Bank (statistics)"
+    type: rss
+    url: "https://www.ecb.europa.eu/rss/statpress.html"
+    country: EU
+    language: en
+    category: statistics
+    frequency: 3h
+    group: "ECB"
+    official: true
+    rights: "Official. Same terms as ECB press releases: reproduction with source acknowledged (verify)."
+  - id: insee-indicateurs
+    name: "INSEE"
+    type: rss
+    url: "https://www.insee.fr/fr/flux/1"
+    country: FR
+    language: fr
+    category: statistics
+    frequency: 3h
+    group: "INSEE"
+    official: true
+    rights: "Official French statistics office. INSEE publications are reusable under Licence Ouverte / Etalab 2.0 with attribution (\"Source : Insee\") and date."
+  - id: insee-publications
+    name: "INSEE (publications)"
+    type: rss
+    url: "https://www.insee.fr/fr/flux/2"
+    country: FR
+    language: fr
+    category: statistics
+    frequency: 6h
+    group: "INSEE"
+    official: true
+    rights: "Official. Licence Ouverte / Etalab 2.0, attribution required."
+  - id: fed-press
+    name: "Federal Reserve"
+    type: rss
+    url: "https://www.federalreserve.gov/feeds/press_all.xml"
+    country: US
+    language: en
+    category: monetary_policy
+    frequency: 1h
+    official: true
+    rights: "Official US federal work, generally public domain in the US (17 U.S.C. 105); attribute the Federal Reserve Board."
+  - id: boe-news
+    name: "Bank of England"
+    type: rss
+    url: "https://www.bankofengland.co.uk/rss/news"
+    country: GB
+    language: en
+    category: monetary_policy
+    frequency: 2h
+    official: true
+    rights: "Official. (c) Bank of England; its terms allow reproduction of text with acknowledgement for non-commercial use (verify for commercial use). Link and own summary."
+  - id: bundesbank
+    name: "Deutsche Bundesbank"
+    type: rss
+    url: "https://www.bundesbank.de/service/rss/de/633286/feed.rss"
+    country: DE
+    language: de
+    category: monetary_policy
+    frequency: 3h
+    official: true
+    rights: "Official. Reproduction permitted with source indicated, per Bundesbank terms (verify). Link and own summary."
+  - id: bde-noticias
+    name: "Banco de España"
+    type: rss
+    url: "https://www.bde.es/wbe/es/inicio/rss/rss-noticias/"
+    country: ES
+    language: es
+    category: monetary_policy
+    frequency: 3h
+    official: true
+    rights: "Official. Reproduction allowed citing the source, per Banco de España legal notice (verify)."
+  - id: bis-press
+    name: "Bank for International Settlements"
+    type: rss
+    url: "https://www.bis.org/doclist/all_pressrels.rss"
+    country: INT
+    language: en
+    category: monetary_policy
+    frequency: 6h
+    official: true
+    rights: "Official international body. (c) BIS; brief excerpts with source allowed (verify). Link and own summary."
+  - id: wto-news
+    name: "World Trade Organization"
+    type: rss
+    url: "https://www.wto.org/library/rss/latest_news_e.xml"
+    country: INT
+    language: en
+    category: trade
+    frequency: 6h
+    official: true
+    rights: "Official international body. (c) WTO; reproduction for non-commercial purposes with source (verify). Link and own summary."
+  - id: bbc-business
+    name: "BBC News"
+    type: rss
+    url: "https://feeds.bbci.co.uk/news/business/rss.xml"
+    country: GB
+    language: en
+    category: economy
+    frequency: 1h
+    group: "BBC"
+    rights: "Copyrighted press content (all rights reserved). Use only the link, the outlet name and your own factual summary; never copy text or images. Feed terms not reviewed for commercial reuse."
+  - id: guardian-business
+    name: "The Guardian"
+    type: rss
+    url: "https://www.theguardian.com/uk/business/rss"
+    country: GB
+    language: en
+    category: economy
+    frequency: 1h
+    group: "Guardian Media Group"
+    rights: "Copyrighted press content (all rights reserved). Use only the link, the outlet name and your own factual summary; never copy text or images. Feed terms not reviewed for commercial reuse."
+  - id: cnbc-economy
+    name: "CNBC"
+    type: rss
+    url: "https://www.cnbc.com/id/20910258/device/rss/rss.html"
+    country: US
+    language: en
+    category: economy
+    frequency: 1h
+    group: "NBCUniversal"
+    rights: "Copyrighted press content (all rights reserved). Use only the link, the outlet name and your own factual summary; never copy text or images. Feed terms not reviewed for commercial reuse."
+  - id: nyt-economy
+    name: "The New York Times"
+    type: rss
+    url: "https://rss.nytimes.com/services/xml/rss/nyt/Economy.xml"
+    country: US
+    language: en
+    category: economy
+    frequency: 1h
+    group: "New York Times Company"
+    rights: "Copyrighted press content (all rights reserved). Use only the link, the outlet name and your own factual summary; never copy text or images. Feed terms not reviewed for commercial reuse. NYT RSS terms: personal, non-commercial use; links only."
+  - id: dw-business
+    name: "Deutsche Welle"
+    type: rss
+    url: "https://rss.dw.com/rdf/rss-en-bus"
+    country: DE
+    language: en
+    category: economy
+    frequency: 1h
+    group: "Deutsche Welle"
+    rights: "Copyrighted press content (all rights reserved). Use only the link, the outlet name and your own factual summary; never copy text or images. Feed terms not reviewed for commercial reuse."
+  - id: lemonde-economie
+    name: "Le Monde"
+    type: rss
+    url: "https://www.lemonde.fr/economie/rss_full.xml"
+    country: FR
+    language: fr
+    category: economy
+    frequency: 1h
+    group: "Groupe Le Monde"
+    rights: "Copyrighted press content (all rights reserved). Use only the link, the outlet name and your own factual summary; never copy text or images. Feed terms not reviewed for commercial reuse."
+  - id: figaro-economie
+    name: "Le Figaro"
+    type: rss
+    url: "https://www.lefigaro.fr/rss/figaro_economie.xml"
+    country: FR
+    language: fr
+    category: economy
+    frequency: 1h
+    group: "Groupe Figaro"
+    rights: "Copyrighted press content (all rights reserved). Use only the link, the outlet name and your own factual summary; never copy text or images. Feed terms not reviewed for commercial reuse."
+  - id: france24-ecotech
+    name: "France 24"
+    type: rss
+    url: "https://www.france24.com/fr/%C3%A9co-tech/rss"
+    country: FR
+    language: fr
+    category: economy
+    frequency: 1h
+    group: "France Médias Monde"
+    rights: "Copyrighted press content (all rights reserved). Use only the link, the outlet name and your own factual summary; never copy text or images. Feed terms not reviewed for commercial reuse."
+  - id: tagesschau-wirtschaft
+    name: "tagesschau"
+    type: rss
+    url: "https://www.tagesschau.de/wirtschaft/index~rss2.xml"
+    country: DE
+    language: de
+    category: economy
+    frequency: 1h
+    group: "ARD"
+    rights: "Copyrighted press content (all rights reserved). Use only the link, the outlet name and your own factual summary; never copy text or images. Feed terms not reviewed for commercial reuse."
+  - id: spiegel-wirtschaft
+    name: "DER SPIEGEL"
+    type: rss
+    url: "https://www.spiegel.de/wirtschaft/index.rss"
+    country: DE
+    language: de
+    category: economy
+    frequency: 1h
+    group: "SPIEGEL-Gruppe"
+    rights: "Copyrighted press content (all rights reserved). Use only the link, the outlet name and your own factual summary; never copy text or images. Feed terms not reviewed for commercial reuse."
+  - id: faz-wirtschaft
+    name: "FAZ"
+    type: rss
+    url: "https://www.faz.net/rss/aktuell/wirtschaft/"
+    country: DE
+    language: de
+    category: economy
+    frequency: 1h
+    group: "FAZ"
+    rights: "Copyrighted press content (all rights reserved). Use only the link, the outlet name and your own factual summary; never copy text or images. Feed terms not reviewed for commercial reuse."
+  - id: handelsblatt
+    name: "Handelsblatt"
+    type: rss
+    url: "https://www.handelsblatt.com/contentexport/feed/wirtschaft"
+    country: DE
+    language: de
+    category: economy
+    frequency: 1h
+    group: "Handelsblatt Media Group"
+    rights: "Copyrighted press content (all rights reserved). Use only the link, the outlet name and your own factual summary; never copy text or images. Feed terms not reviewed for commercial reuse."
+  - id: elpais-economia
+    name: "El País"
+    type: rss
+    url: "https://feeds.elpais.com/mrss-s/pages/ep/site/elpais.com/section/economia/portada"
+    country: ES
+    language: es
+    category: economy
+    frequency: 1h
+    group: "PRISA"
+    rights: "Copyrighted press content (all rights reserved). Use only the link, the outlet name and your own factual summary; never copy text or images. Feed terms not reviewed for commercial reuse."
+  - id: expansion
+    name: "Expansión"
+    type: rss
+    url: "https://e00-expansion.uecdn.es/rss/economia.xml"
+    country: ES
+    language: es
+    category: economy
+    frequency: 1h
+    group: "Unidad Editorial"
+    rights: "Copyrighted press content (all rights reserved). Use only the link, the outlet name and your own factual summary; never copy text or images. Feed terms not reviewed for commercial reuse."
+  - id: ilsole24ore
+    name: "Il Sole 24 Ore"
+    type: rss
+    url: "https://www.ilsole24ore.com/rss/economia.xml"
+    country: IT
+    language: it
+    category: economy
+    frequency: 1h
+    group: "Gruppo 24 Ore"
+    rights: "Copyrighted press content (all rights reserved). Use only the link, the outlet name and your own factual summary; never copy text or images. Feed terms not reviewed for commercial reuse."
+  - id: ansa-economia
+    name: "ANSA"
+    type: rss
+    url: "https://www.ansa.it/sito/notizie/economia/economia_rss.xml"
+    country: IT
+    language: it
+    category: economy
+    frequency: 1h
+    group: "ANSA"
+    rights: "Copyrighted press content (all rights reserved). Use only the link, the outlet name and your own factual summary; never copy text or images. Feed terms not reviewed for commercial reuse."
+  - id: repubblica-economia
+    name: "la Repubblica"
+    type: rss
+    url: "https://www.repubblica.it/rss/economia/rss2.0.xml"
+    country: IT
+    language: it
+    category: economy
+    frequency: 1h
+    group: "GEDI"
+    rights: "Copyrighted press content (all rights reserved). Use only the link, the outlet name and your own factual summary; never copy text or images. Feed terms not reviewed for commercial reuse."
+  - id: folha-mercado
+    name: "Folha de S.Paulo"
+    type: rss
+    url: "https://feeds.folha.uol.com.br/mercado/rss091.xml"
+    country: BR
+    language: pt
+    category: economy
+    frequency: 1h
+    group: "Grupo Folha"
+    rights: "Copyrighted press content (all rights reserved). Use only the link, the outlet name and your own factual summary; never copy text or images. Feed terms not reviewed for commercial reuse."
+  - id: g1-economia
+    name: "g1"
+    type: rss
+    url: "https://g1.globo.com/rss/g1/economia/"
+    country: BR
+    language: pt
+    category: economy
+    frequency: 1h
+    group: "Grupo Globo"
+    rights: "Copyrighted press content (all rights reserved). Use only the link, the outlet name and your own factual summary; never copy text or images. Feed terms not reviewed for commercial reuse."
+  - id: rtp-economia
+    name: "RTP Notícias"
+    type: rss
+    url: "https://www.rtp.pt/noticias/rss/economia"
+    country: PT
+    language: pt
+    category: economy
+    frequency: 1h
+    group: "RTP"
+    rights: "Copyrighted press content (all rights reserved). Use only the link, the outlet name and your own factual summary; never copy text or images. Feed terms not reviewed for commercial reuse."
+  - id: nos-economie
+    name: "NOS"
+    type: rss
+    url: "https://feeds.nos.nl/nosnieuwseconomie"
+    country: NL
+    language: nl
+    category: economy
+    frequency: 1h
+    group: "NPO"
+    rights: "Copyrighted press content (all rights reserved). Use only the link, the outlet name and your own factual summary; never copy text or images. Feed terms not reviewed for commercial reuse."
+  - id: nhk-business
+    name: "NHK"
+    type: rss
+    url: "https://www3.nhk.or.jp/rss/news/cat5.xml"
+    country: JP
+    language: ja
+    category: economy
+    frequency: 1h
+    group: "NHK"
+    rights: "(c) NHK. NHK forbids reuse of its content without permission; titles must not be reproduced. Link only, with your own summary from other sources."
+  - id: gdelt-economy
+    name: "GDELT (world economy)"
+    type: gdelt
+    url: "https://api.gdeltproject.org/api/v2/doc/doc"
+    query: "(inflation OR \"interest rates\" OR \"central bank\" OR recession OR GDP) theme:ECON_INFLATION"
+    country: INT
+    language: en
+    category: economy
+    frequency: 2h
+    rights: "GDELT DOC 2.0 API, open data with attribution to the GDELT Project; max one request every 5 s. Linked articles keep their publishers' rights: link and own summary only."

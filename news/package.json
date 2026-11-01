@@ -1,0 +1,34 @@
+{
+  "name": "@break-rocks/news-agent",
+  "version": "0.1.0",
+  "description": "News agent kit for break.rocks: a local MCP server (breakrocks-news) that collects, groups and tracks news events; your own AI writes and publishes through `breakrocks mcp`.",
+  "license": "Apache-2.0",
+  "private": true,
+  "type": "module",
+  "bin": { "breakrocks-news": "dist/index.js" },
+  "engines": { "node": ">=22.13" },
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "start": "node dist/index.js",
+    "dev": "node --experimental-strip-types src/index.ts",
+    "collect": "node dist/index.js collect",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint .",
+    "test": "vitest run",
+    "check": "npm run lint && npm run typecheck && npm test"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "1.32.2",
+    "fast-xml-parser": "5.11.2",
+    "yaml": "2.9.1",
+    "zod": "4.6.7"
+  },
+  "devDependencies": {
+    "@eslint/js": "10.0.1",
+    "@types/node": "22.20.5",
+    "eslint": "10.13.0",
+    "typescript": "6.0.3",
+    "typescript-eslint": "8.72.0",
+    "vitest": "4.1.12"
+  }
+}
