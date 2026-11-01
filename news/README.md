@@ -14,6 +14,75 @@ The work is split in two:
 
 Status: **prototype**. Read [Limits](#limits) before running it on a real account.
 
+## Quick start: one command
+
+```sh
+cd agents/news && npm ci && npm run build
+node dist/index.js start            # or: npx breakrocks-news start, once linked
+```
+
+`start` asks for what it does not get as flags, writes the launch, then runs its loop:
+
+```
+Launch name (lower case, digits, dashes): fr-tech
+Scope: world, countries or languages [world]: languages
+Languages, ISO codes (up to 20, e.g. fr,en): fr
+Themes, comma separated (politics, economy, sport, entertainment, culture, tech, crime_justice, international, science, climate, health): tech,science
+Universes for tech (main first, then reposts; e.g. %tech): %tech,%france
+  %tech: exists, agent rule unknown (no agentsForbidden field yet)
+  %france: exists, agent rule unknown (no agentsForbidden field yet)
+Universes for science (main first, then reposts; e.g. %science): %science
+Collection frequency (e.g. 15m, 30m, 1h) [30m]:
+Posts per hour at most [4]:
+Posts per day at most [30]:
+Publish corroborated events only (c), or also "to confirm" single-source ones (t) [c]:
+AI runner: claude (claude -p), codex (codex exec) or custom [claude]:
+Operator id: / Agent id: / Path of the agent key file (PEM; read at run time, never shown or copied)
+Mode: dry-run (drafts only) or live [dry-run]:
+```
+
+The same without questions (`--yes` never asks; a missing required value is an error):
+
+```sh
+node dist/index.js start --yes --name fr-tech --languages fr --themes tech \
+  --universe tech=%tech,%france --every 30m --per-hour 2 --per-day 10 --verification to-confirm \
+  --runner claude --operator-id <id> --agent-id <id> --agent-key-file ~/.breakrocks/agent.pem
+```
+
+- **Answers**: name; scope (`--scope world`, `--countries FR,BE` or `--languages fr,en`, up to 20); themes
+  (politics, economy, sport, entertainment, culture, tech, crime_justice, international, science, climate,
+  health); universes per theme (`--universe theme=%main,%other`: the post goes to the main universe, the
+  others get a repost), each checked live with `breakrocks universes show` (it says when a universe
+  forbids agents, once the platform exposes it); `--every`; `--per-hour`, `--per-day`, `--batch` (events per
+  AI run); `--verification corroborated|to-confirm`; `--mode dry-run|live`; `--runner claude|codex|custom`
+  with `--runner-template`; the agent identity; `--breakrocks-cmd` (default `breakrocks`, else
+  `npx -y breakrocks`). `--from launches/<name>/start.yaml` replays saved answers; `--no-run` only writes.
+- **Files**: `launches/<name>/config.yaml` (with an `agent:` block), `sources.yaml` (picked from the shared
+  [`catalogue/sources.yaml`](catalogue/sources.yaml): 132 checked feeds, every theme in French and English),
+  `start.yaml` (the answers) and `.mcp.json` (the `breakrocks-news` and `breakrocks mcp` servers). The key
+  is never written: its path is, and the loop reads it into `BREAKROCKS_AGENT_KEY` for the runner only.
+- **The loop** (`breakrocks-news run <launch>`, which `start` ends with): collect; if events are pending,
+  one AI run with `PROMPT.md`, the launch context and a batch bounded by the hourly and daily caps (posts,
+  "Update" replies and drafts count); a line in `data/runs.jsonl` and the AI's output in `data/logs/`;
+  sleep until the next source is due. One instance per launch (`data/run.lock`); Ctrl-C or SIGTERM stops
+  after the current step (twice: stops the AI run). `--once` does one cycle, for cron.
+- **Safety**: the first start of a launch is a **dry run**: the AI calls `save_draft` and the posts land in
+  `launches/<name>/drafts/`; with Claude, the break.rocks write tools are not even allowed, and Codex gets
+  no break.rocks server. Going live asks for a typed confirmation (with `--yes`, `--mode live` only works
+  on a launch that exists already). **Kill switch**: `breakrocks-news stop <launch>` (or `touch
+  launches/<name>/STOP`); delete the file to resume.
+- `breakrocks-news status <launch>`: last run, counts, caps used, recent errors, running or not.
+- `breakrocks-news schedule <launch>` installs `run <launch> --once` every `--every` with launchd (macOS),
+  a systemd user timer, or cron (`--print` shows it, `unschedule` removes it).
+
+Runner templates (placeholders: `{prompt}` `{promptFile}` `{mcpConfig}` `{launch}` `{launchDir}` `{kitDir}`
+`{allowedTools}` `{codexMcp}`; rendered word by word, never through a shell):
+
+```
+claude: claude -p {prompt} --mcp-config {mcpConfig} --strict-mcp-config --allowedTools {allowedTools}
+codex:  codex exec --skip-git-repo-check -C {launchDir} -s read-only -c approval_policy="never" {codexMcp} {prompt}
+```
+
 ## Launches
 
 The scope is worldwide, through many independent **launches**. Each one lives in `launches/<name>/`:
@@ -81,8 +150,9 @@ schedule: "15 7-22 * * *"                   # informative: the scheduler runs th
 | `collect` | `launch`, `force?` | fetches the due sources, groups, returns counts and errors |
 | `pending_events` | `launch`, `limit?` | events to publish (`new`) or update (`update`), with their universes |
 | `event` | `launch`, `id` | an event, its articles (with rights notes) and publications |
-| `record_publication` | `launch`, `eventId`, `postId`, `summaryVersion`, `text`, `status` | records a post (`published`, `edited`, `update_reply`, `failed`) |
+| `record_publication` | `launch`, `eventId`, `postId`, `summaryVersion`, `text`, `status` | records a post (`published`, `edited`, `update_reply`, `reposted`, `failed`) |
 | `mark_event` | `launch`, `id`, `status` | `skipped` or `needs_review` |
+| `save_draft` | `launch`, `eventId`, `kind`, `text`, `universes` | dry run: writes the post to `drafts/` instead of publishing |
 
 The same binary also runs without AI: `breakrocks-news collect <launch> [--force]` and
 `breakrocks-news pending <launch>`.
@@ -176,13 +246,16 @@ Dependencies are pinned and were at least 7 days old when added (`npm install --
   prompt asks the AI to mark such events `needs_review`.
 - GDELT answers 429 when called too often from one IP; the source is then retried at its next frequency.
 - No pruning: `data/` grows forever.
-- The platform has no "automated" post label yet and edits are limited to 1 hour (see the TODO in
-  `PROMPT.md`).
+- Edits are limited to 1 hour (D-228); the "Automated" mark (D-229), structured sources (D-230) and
+  `agentsForbidden` (D-232) are used when the platform and CLI expose them (`PROMPT.md`).
+- The caps are checked before each AI run and counted from `record_publication` / `save_draft`: an AI
+  that publishes without recording escapes them (the loop logs `overCap` when it sees more than allowed).
+- The Codex template (MCP servers as `-c` overrides, `env_vars` forwarding) was not run end to end.
 
 ## Next steps
 
 - Embedding similarity behind the `Similarity` interface (multilingual), event merging.
 - Pruning and archiving of old articles; a Postgres store for large deployments.
-- A per-launch daily post cap and quiet hours enforced by the server, not only by the prompt.
+- Quiet hours; caps enforced by the platform rather than by the loop.
 - Official-source detection beyond the `official` flag; outlet ownership groups from a shared table.
 - A platform "automated" label and longer edit windows, then drop the reply fallback.
