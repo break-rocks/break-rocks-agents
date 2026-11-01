@@ -1,0 +1,1438 @@
+# The shared source catalogue of the news kit: `breakrocks-news start` picks a launch's sources here,
+# by theme (the `theme` field) and scope (country or language). Merged from the fr-tech and world-economy
+# launches, then extended to the 11 themes (politics, economy, sport, entertainment, culture, tech,
+# crime_justice, international, science, climate, health) in French and English.
+# Every feed answered with items on 2026-11-01. Left out: vie-publique.fr (empty feed), Première (404),
+# 20 Minutes faits divers (403), franceinfo environnement (empty), NASA climate (404), WHO in French (404).
+# rights: an honest note, not legal advice. Default rule for the press: links + own summary only.
+sources:
+  - id: lemonde-pixels
+    name: Le Monde
+    type: rss
+    url: https://www.lemonde.fr/pixels/rss_full.xml
+    country: FR
+    language: fr
+    category: tech
+    frequency: 1h
+    group: Groupe Le Monde
+    rights: Copyrighted press content (all rights reserved). Use only the link, the outlet name and your own factual summary; never copy text or images. Feed terms not reviewed for commercial reuse.
+    theme: tech
+  - id: numerama
+    name: Numerama
+    type: rss
+    url: https://www.numerama.com/feed/
+    country: FR
+    language: fr
+    category: tech
+    frequency: 1h
+    group: Humanoid
+    rights: Copyrighted press content (all rights reserved). Use only the link, the outlet name and your own factual summary; never copy text or images. Feed terms not reviewed for commercial reuse.
+    theme: tech
+  - id: frandroid
+    name: Frandroid
+    type: rss
+    url: https://www.frandroid.com/feed
+    country: FR
+    language: fr
+    category: tech
+    frequency: 1h
+    group: Humanoid
+    rights: Copyrighted press content (all rights reserved). Use only the link, the outlet name and your own factual summary; never copy text or images. Feed terms not reviewed for commercial reuse.
+    theme: tech
+  - id: 01net
+    name: 01net
+    type: rss
+    url: https://www.01net.com/actualites/feed/
+    country: FR
+    language: fr
+    category: tech
+    frequency: 1h
+    group: Keleops
+    rights: Copyrighted press content (all rights reserved). Use only the link, the outlet name and your own factual summary; never copy text or images. Feed terms not reviewed for commercial reuse.
+    theme: tech
+  - id: journaldugeek
+    name: Journal du Geek
+    type: rss
+    url: https://www.journaldugeek.com/feed/
+    country: FR
+    language: fr
+    category: tech
+    frequency: 1h
+    group: Keleops
+    rights: Copyrighted press content (all rights reserved). Use only the link, the outlet name and your own factual summary; never copy text or images. Feed terms not reviewed for commercial reuse.
+    theme: tech
+  - id: next
+    name: Next
+    type: rss
+    url: https://next.ink/feed/
+    country: FR
+    language: fr
+    category: tech
+    frequency: 1h
+    rights: Copyrighted press content (all rights reserved). Use only the link, the outlet name and your own factual summary; never copy text or images. Feed terms not reviewed for commercial reuse.
+    theme: tech
+  - id: clubic
+    name: Clubic
+    type: rss
+    url: https://www.clubic.com/feed/news.rss
+    country: FR
+    language: fr
+    category: tech
+    frequency: 1h
+    group: Groupe Clubic
+    rights: Copyrighted press content (all rights reserved). Use only the link, the outlet name and your own factual summary; never copy text or images. Feed terms not reviewed for commercial reuse.
+    theme: tech
+  - id: lesnumeriques
+    name: Les Numériques
+    type: rss
+    url: https://www.lesnumeriques.com/rss.xml
+    country: FR
+    language: fr
+    category: tech
+    frequency: 1h
+    group: Ziff Davis France
+    rights: Copyrighted press content (all rights reserved). Use only the link, the outlet name and your own factual summary; never copy text or images. Feed terms not reviewed for commercial reuse.
+    theme: tech
+  - id: zdnet-fr
+    name: ZDNet France
+    type: rss
+    url: https://www.zdnet.fr/feeds/rss/actualites/
+    country: FR
+    language: fr
+    category: tech
+    frequency: 1h
+    group: Ziff Davis France
+    rights: Copyrighted press content (all rights reserved). Use only the link, the outlet name and your own factual summary; never copy text or images. Feed terms not reviewed for commercial reuse.
+    theme: tech
+  - id: siecledigital
+    name: Siècle Digital
+    type: rss
+    url: https://siecledigital.fr/feed/
+    country: FR
+    language: fr
+    category: tech
+    frequency: 1h
+    rights: Copyrighted press content (all rights reserved). Use only the link, the outlet name and your own factual summary; never copy text or images. Feed terms not reviewed for commercial reuse.
+    theme: tech
+  - id: bfm-tech
+    name: BFM Tech&Co
+    type: rss
+    url: https://www.bfmtv.com/rss/tech/
+    country: FR
+    language: fr
+    category: tech
+    frequency: 1h
+    group: RMC BFM
+    rights: Copyrighted press content (all rights reserved). Use only the link, the outlet name and your own factual summary; never copy text or images. Feed terms not reviewed for commercial reuse.
+    theme: tech
+  - id: korben
+    name: Korben
+    type: rss
+    url: https://korben.info/feed
+    country: FR
+    language: fr
+    category: tech
+    frequency: 3h
+    rights: Copyrighted press content (all rights reserved). Use only the link, the outlet name and your own factual summary; never copy text or images. Feed terms not reviewed for commercial reuse.
+    theme: tech
+  - id: lemagit
+    name: LeMagIT
+    type: rss
+    url: https://www.lemagit.fr/rss/ContentSyndication.xml
+    country: FR
+    language: fr
+    category: tech
+    frequency: 1h
+    group: TechTarget
+    rights: Copyrighted press content (all rights reserved). Use only the link, the outlet name and your own factual summary; never copy text or images. Feed terms not reviewed for commercial reuse.
+    theme: tech
+  - id: usine-digitale
+    name: L'Usine Digitale
+    type: rss
+    url: https://www.usine-digitale.fr/rss
+    country: FR
+    language: fr
+    category: tech
+    frequency: 2h
+    group: Infopro Digital
+    rights: Copyrighted press content (all rights reserved). Use only the link, the outlet name and your own factual summary; never copy text or images. Feed terms not reviewed for commercial reuse.
+    theme: tech
+  - id: presse-citron
+    name: Presse-citron
+    type: rss
+    url: https://www.presse-citron.net/feed/
+    country: FR
+    language: fr
+    category: tech
+    frequency: 1h
+    rights: Copyrighted press content (all rights reserved). Use only the link, the outlet name and your own factual summary; never copy text or images. Feed terms not reviewed for commercial reuse.
+    theme: tech
+  - id: maddyness
+    name: Maddyness
+    type: rss
+    url: https://www.maddyness.com/feed/
+    country: FR
+    language: fr
+    category: startups
+    frequency: 2h
+    rights: Copyrighted press content (all rights reserved). Use only the link, the outlet name and your own factual summary; never copy text or images. Feed terms not reviewed for commercial reuse.
+    theme: tech
+  - id: frenchweb
+    name: FrenchWeb
+    type: rss
+    url: https://www.frenchweb.fr/feed
+    country: FR
+    language: fr
+    category: startups
+    frequency: 2h
+    rights: Copyrighted press content (all rights reserved). Use only the link, the outlet name and your own factual summary; never copy text or images. Feed terms not reviewed for commercial reuse.
+    theme: tech
+  - id: journaldunet
+    name: Journal du Net
+    type: rss
+    url: https://www.journaldunet.com/rss/
+    country: FR
+    language: fr
+    category: tech
+    frequency: 1h
+    group: CCM Benchmark (Figaro)
+    rights: Copyrighted press content (all rights reserved). Use only the link, the outlet name and your own factual summary; never copy text or images. Feed terms not reviewed for commercial reuse.
+    theme: tech
+  - id: lemondeinformatique
+    name: Le Monde Informatique
+    type: rss
+    url: https://www.lemondeinformatique.fr/flux-rss/thematique/toutes-les-actualites/rss.xml
+    country: FR
+    language: fr
+    category: tech
+    frequency: 1h
+    group: IT News Info
+    rights: Copyrighted press content (all rights reserved). Use only the link, the outlet name and your own factual summary; never copy text or images. Feed terms not reviewed for commercial reuse.
+    theme: tech
+  - id: begeek
+    name: BeGeek
+    type: rss
+    url: https://www.begeek.fr/feed
+    country: FR
+    language: fr
+    category: tech
+    frequency: 3h
+    rights: Copyrighted press content (all rights reserved). Use only the link, the outlet name and your own factual summary; never copy text or images. Feed terms not reviewed for commercial reuse.
+    theme: tech
+  - id: franceinfo-internet
+    name: franceinfo
+    type: rss
+    url: https://www.francetvinfo.fr/internet.rss
+    country: FR
+    language: fr
+    category: tech
+    frequency: 1h
+    group: France Télévisions
+    rights: Copyrighted press content (all rights reserved). Use only the link, the outlet name and your own factual summary; never copy text or images. Feed terms not reviewed for commercial reuse.
+    theme: tech
+  - id: figaro-hightech
+    name: Le Figaro
+    type: rss
+    url: https://www.lefigaro.fr/rss/figaro_secteur_high-tech.xml
+    country: FR
+    language: fr
+    category: tech
+    frequency: 1h
+    group: Groupe Figaro
+    rights: Copyrighted press content (all rights reserved). Use only the link, the outlet name and your own factual summary; never copy text or images. Feed terms not reviewed for commercial reuse.
+    theme: tech
+  - id: 20minutes-hightech
+    name: 20 Minutes
+    type: rss
+    url: https://www.20minutes.fr/feeds/rss-high-tech.xml
+    country: FR
+    language: fr
+    category: tech
+    frequency: 1h
+    group: 20 Minutes (Rossel/Ouest-France)
+    rights: Copyrighted press content (all rights reserved). Use only the link, the outlet name and your own factual summary; never copy text or images. Feed terms not reviewed for commercial reuse.
+    theme: tech
+  - id: france24-ecotech
+    name: France 24
+    type: rss
+    url: https://www.france24.com/fr/%C3%A9co-tech/rss
+    country: FR
+    language: fr
+    category: tech
+    frequency: 1h
+    group: France Médias Monde
+    rights: Copyrighted press content (all rights reserved). Use only the link, the outlet name and your own factual summary; never copy text or images. Feed terms not reviewed for commercial reuse.
+    theme: tech
+  - id: cnil
+    name: CNIL
+    type: rss
+    url: https://www.cnil.fr/fr/rss.xml
+    country: FR
+    language: fr
+    category: regulation
+    frequency: 6h
+    official: true
+    rights: "Official French authority. cnil.fr content is published under Licence Ouverte / Etalab 2.0 per its legal notice (verify): reuse with attribution and date; logos and third-party images excluded."
+    theme: tech
+  - id: cert-fr
+    name: CERT-FR (ANSSI)
+    type: rss
+    url: https://www.cert.ssi.gouv.fr/feed/
+    country: FR
+    language: fr
+    category: security
+    frequency: 3h
+    official: true
+    rights: "Official French government CERT. Its site states reuse under Licence Ouverte / Etalab 2.0 (verify): attribution required; link the advisory."
+    theme: tech
+  - id: hackernews
+    name: Hacker News
+    type: hackernews
+    url: https://hn.algolia.com/api/v1/search?tags=front_page
+    country: US
+    language: en
+    category: tech
+    frequency: 1h
+    rights: "Public Algolia HN Search API, no key. Only titles and links are used; each link points to a third-party site with its own rights. Not counted as one outlet: each link counts as its own domain."
+    theme: tech
+  - id: gdelt-fr-tech
+    name: GDELT (French tech)
+    type: gdelt
+    url: https://api.gdeltproject.org/api/v2/doc/doc
+    query: (technologie OR "intelligence artificielle" OR cybersécurité OR startup) sourcelang:french
+    country: FR
+    language: fr
+    category: tech
+    frequency: 2h
+    rights: "GDELT DOC 2.0 API, open data with attribution to the GDELT Project; max one request every 5 s. Linked articles keep their publishers' rights: link and own summary only."
+    theme: tech
+  - id: ecb-press
+    name: European Central Bank
+    type: rss
+    url: https://www.ecb.europa.eu/rss/press.html
+    country: EU
+    language: en
+    category: monetary_policy
+    frequency: 1h
+    group: ECB
+    official: true
+    rights: Official. ECB copyright notice allows reproduction with the source acknowledged, except where stated otherwise (verify); no photos.
+    theme: economy
+  - id: ecb-statpress
+    name: European Central Bank (statistics)
+    type: rss
+    url: https://www.ecb.europa.eu/rss/statpress.html
+    country: EU
+    language: en
+    category: statistics
+    frequency: 3h
+    group: ECB
+    official: true
+    rights: "Official. Same terms as ECB press releases: reproduction with source acknowledged (verify)."
+    theme: economy
+  - id: insee-indicateurs
+    name: INSEE
+    type: rss
+    url: https://www.insee.fr/fr/flux/1
+    country: FR
+    language: fr
+    category: statistics
+    frequency: 3h
+    group: INSEE
+    official: true
+    rights: 'Official French statistics office. INSEE publications are reusable under Licence Ouverte / Etalab 2.0 with attribution ("Source : Insee") and date.'
+    theme: economy
+  - id: insee-publications
+    name: INSEE (publications)
+    type: rss
+    url: https://www.insee.fr/fr/flux/2
+    country: FR
+    language: fr
+    category: statistics
+    frequency: 6h
+    group: INSEE
+    official: true
+    rights: Official. Licence Ouverte / Etalab 2.0, attribution required.
+    theme: economy
+  - id: fed-press
+    name: Federal Reserve
+    type: rss
+    url: https://www.federalreserve.gov/feeds/press_all.xml
+    country: US
+    language: en
+    category: monetary_policy
+    frequency: 1h
+    official: true
+    rights: Official US federal work, generally public domain in the US (17 U.S.C. 105); attribute the Federal Reserve Board.
+    theme: economy
+  - id: boe-news
+    name: Bank of England
+    type: rss
+    url: https://www.bankofengland.co.uk/rss/news
+    country: GB
+    language: en
+    category: monetary_policy
+    frequency: 2h
+    official: true
+    rights: Official. (c) Bank of England; its terms allow reproduction of text with acknowledgement for non-commercial use (verify for commercial use). Link and own summary.
+    theme: economy
+  - id: bundesbank
+    name: Deutsche Bundesbank
+    type: rss
+    url: https://www.bundesbank.de/service/rss/de/633286/feed.rss
+    country: DE
+    language: de
+    category: monetary_policy
+    frequency: 3h
+    official: true
+    rights: Official. Reproduction permitted with source indicated, per Bundesbank terms (verify). Link and own summary.
+    theme: economy
+  - id: bde-noticias
+    name: Banco de España
+    type: rss
+    url: https://www.bde.es/wbe/es/inicio/rss/rss-noticias/
+    country: ES
+    language: es
+    category: monetary_policy
+    frequency: 3h
+    official: true
+    rights: Official. Reproduction allowed citing the source, per Banco de España legal notice (verify).
+    theme: economy
+  - id: bis-press
+    name: Bank for International Settlements
+    type: rss
+    url: https://www.bis.org/doclist/all_pressrels.rss
+    country: INT
+    language: en
+    category: monetary_policy
+    frequency: 6h
+    official: true
+    rights: Official international body. (c) BIS; brief excerpts with source allowed (verify). Link and own summary.
+    theme: economy
+  - id: wto-news
+    name: World Trade Organization
+    type: rss
+    url: https://www.wto.org/library/rss/latest_news_e.xml
+    country: INT
+    language: en
+    category: trade
+    frequency: 6h
+    official: true
+    rights: Official international body. (c) WTO; reproduction for non-commercial purposes with source (verify). Link and own summary.
+    theme: economy
+  - id: bbc-business
+    name: BBC News
+    type: rss
+    url: https://feeds.bbci.co.uk/news/business/rss.xml
+    country: GB
+    language: en
+    category: economy
+    frequency: 1h
+    group: BBC
+    rights: Copyrighted press content (all rights reserved). Use only the link, the outlet name and your own factual summary; never copy text or images. Feed terms not reviewed for commercial reuse.
+    theme: economy
+  - id: guardian-business
+    name: The Guardian
+    type: rss
+    url: https://www.theguardian.com/uk/business/rss
+    country: GB
+    language: en
+    category: economy
+    frequency: 1h
+    group: Guardian Media Group
+    rights: Copyrighted press content (all rights reserved). Use only the link, the outlet name and your own factual summary; never copy text or images. Feed terms not reviewed for commercial reuse.
+    theme: economy
+  - id: cnbc-economy
+    name: CNBC
+    type: rss
+    url: https://www.cnbc.com/id/20910258/device/rss/rss.html
+    country: US
+    language: en
+    category: economy
+    frequency: 1h
+    group: NBCUniversal
+    rights: Copyrighted press content (all rights reserved). Use only the link, the outlet name and your own factual summary; never copy text or images. Feed terms not reviewed for commercial reuse.
+    theme: economy
+  - id: nyt-economy
+    name: The New York Times
+    type: rss
+    url: https://rss.nytimes.com/services/xml/rss/nyt/Economy.xml
+    country: US
+    language: en
+    category: economy
+    frequency: 1h
+    group: New York Times Company
+    rights: "Copyrighted press content (all rights reserved). Use only the link, the outlet name and your own factual summary; never copy text or images. Feed terms not reviewed for commercial reuse. NYT RSS terms: personal, non-commercial use; links only."
+    theme: economy
+  - id: dw-business
+    name: Deutsche Welle
+    type: rss
+    url: https://rss.dw.com/rdf/rss-en-bus
+    country: DE
+    language: en
+    category: economy
+    frequency: 1h
+    group: Deutsche Welle
+    rights: Copyrighted press content (all rights reserved). Use only the link, the outlet name and your own factual summary; never copy text or images. Feed terms not reviewed for commercial reuse.
+    theme: economy
+  - id: lemonde-economie
+    name: Le Monde
+    type: rss
+    url: https://www.lemonde.fr/economie/rss_full.xml
+    country: FR
+    language: fr
+    category: economy
+    frequency: 1h
+    group: Groupe Le Monde
+    rights: Copyrighted press content (all rights reserved). Use only the link, the outlet name and your own factual summary; never copy text or images. Feed terms not reviewed for commercial reuse.
+    theme: economy
+  - id: figaro-economie
+    name: Le Figaro
+    type: rss
+    url: https://www.lefigaro.fr/rss/figaro_economie.xml
+    country: FR
+    language: fr
+    category: economy
+    frequency: 1h
+    group: Groupe Figaro
+    rights: Copyrighted press content (all rights reserved). Use only the link, the outlet name and your own factual summary; never copy text or images. Feed terms not reviewed for commercial reuse.
+    theme: economy
+  - id: tagesschau-wirtschaft
+    name: tagesschau
+    type: rss
+    url: https://www.tagesschau.de/wirtschaft/index~rss2.xml
+    country: DE
+    language: de
+    category: economy
+    frequency: 1h
+    group: ARD
+    rights: Copyrighted press content (all rights reserved). Use only the link, the outlet name and your own factual summary; never copy text or images. Feed terms not reviewed for commercial reuse.
+    theme: economy
+  - id: spiegel-wirtschaft
+    name: DER SPIEGEL
+    type: rss
+    url: https://www.spiegel.de/wirtschaft/index.rss
+    country: DE
+    language: de
+    category: economy
+    frequency: 1h
+    group: SPIEGEL-Gruppe
+    rights: Copyrighted press content (all rights reserved). Use only the link, the outlet name and your own factual summary; never copy text or images. Feed terms not reviewed for commercial reuse.
+    theme: economy
+  - id: faz-wirtschaft
+    name: FAZ
+    type: rss
+    url: https://www.faz.net/rss/aktuell/wirtschaft/
+    country: DE
+    language: de
+    category: economy
+    frequency: 1h
+    group: FAZ
+    rights: Copyrighted press content (all rights reserved). Use only the link, the outlet name and your own factual summary; never copy text or images. Feed terms not reviewed for commercial reuse.
+    theme: economy
+  - id: handelsblatt
+    name: Handelsblatt
+    type: rss
+    url: https://www.handelsblatt.com/contentexport/feed/wirtschaft
+    country: DE
+    language: de
+    category: economy
+    frequency: 1h
+    group: Handelsblatt Media Group
+    rights: Copyrighted press content (all rights reserved). Use only the link, the outlet name and your own factual summary; never copy text or images. Feed terms not reviewed for commercial reuse.
+    theme: economy
+  - id: elpais-economia
+    name: El País
+    type: rss
+    url: https://feeds.elpais.com/mrss-s/pages/ep/site/elpais.com/section/economia/portada
+    country: ES
+    language: es
+    category: economy
+    frequency: 1h
+    group: PRISA
+    rights: Copyrighted press content (all rights reserved). Use only the link, the outlet name and your own factual summary; never copy text or images. Feed terms not reviewed for commercial reuse.
+    theme: economy
+  - id: expansion
+    name: Expansión
+    type: rss
+    url: https://e00-expansion.uecdn.es/rss/economia.xml
+    country: ES
+    language: es
+    category: economy
+    frequency: 1h
+    group: Unidad Editorial
+    rights: Copyrighted press content (all rights reserved). Use only the link, the outlet name and your own factual summary; never copy text or images. Feed terms not reviewed for commercial reuse.
+    theme: economy
+  - id: ilsole24ore
+    name: Il Sole 24 Ore
+    type: rss
+    url: https://www.ilsole24ore.com/rss/economia.xml
+    country: IT
+    language: it
+    category: economy
+    frequency: 1h
+    group: Gruppo 24 Ore
+    rights: Copyrighted press content (all rights reserved). Use only the link, the outlet name and your own factual summary; never copy text or images. Feed terms not reviewed for commercial reuse.
+    theme: economy
+  - id: ansa-economia
+    name: ANSA
+    type: rss
+    url: https://www.ansa.it/sito/notizie/economia/economia_rss.xml
+    country: IT
+    language: it
+    category: economy
+    frequency: 1h
+    group: ANSA
+    rights: Copyrighted press content (all rights reserved). Use only the link, the outlet name and your own factual summary; never copy text or images. Feed terms not reviewed for commercial reuse.
+    theme: economy
+  - id: repubblica-economia
+    name: la Repubblica
+    type: rss
+    url: https://www.repubblica.it/rss/economia/rss2.0.xml
+    country: IT
+    language: it
+    category: economy
+    frequency: 1h
+    group: GEDI
+    rights: Copyrighted press content (all rights reserved). Use only the link, the outlet name and your own factual summary; never copy text or images. Feed terms not reviewed for commercial reuse.
+    theme: economy
+  - id: folha-mercado
+    name: Folha de S.Paulo
+    type: rss
+    url: https://feeds.folha.uol.com.br/mercado/rss091.xml
+    country: BR
+    language: pt
+    category: economy
+    frequency: 1h
+    group: Grupo Folha
+    rights: Copyrighted press content (all rights reserved). Use only the link, the outlet name and your own factual summary; never copy text or images. Feed terms not reviewed for commercial reuse.
+    theme: economy
+  - id: g1-economia
+    name: g1
+    type: rss
+    url: https://g1.globo.com/rss/g1/economia/
+    country: BR
+    language: pt
+    category: economy
+    frequency: 1h
+    group: Grupo Globo
+    rights: Copyrighted press content (all rights reserved). Use only the link, the outlet name and your own factual summary; never copy text or images. Feed terms not reviewed for commercial reuse.
+    theme: economy
+  - id: rtp-economia
+    name: RTP Notícias
+    type: rss
+    url: https://www.rtp.pt/noticias/rss/economia
+    country: PT
+    language: pt
+    category: economy
+    frequency: 1h
+    group: RTP
+    rights: Copyrighted press content (all rights reserved). Use only the link, the outlet name and your own factual summary; never copy text or images. Feed terms not reviewed for commercial reuse.
+    theme: economy
+  - id: nos-economie
+    name: NOS
+    type: rss
+    url: https://feeds.nos.nl/nosnieuwseconomie
+    country: NL
+    language: nl
+    category: economy
+    frequency: 1h
+    group: NPO
+    rights: Copyrighted press content (all rights reserved). Use only the link, the outlet name and your own factual summary; never copy text or images. Feed terms not reviewed for commercial reuse.
+    theme: economy
+  - id: nhk-business
+    name: NHK
+    type: rss
+    url: https://www3.nhk.or.jp/rss/news/cat5.xml
+    country: JP
+    language: ja
+    category: economy
+    frequency: 1h
+    group: NHK
+    rights: (c) NHK. NHK forbids reuse of its content without permission; titles must not be reproduced. Link only, with your own summary from other sources.
+    theme: economy
+  - id: gdelt-economy
+    name: GDELT (world economy)
+    type: gdelt
+    url: https://api.gdeltproject.org/api/v2/doc/doc
+    query: (inflation OR "interest rates" OR "central bank" OR recession OR GDP) theme:ECON_INFLATION
+    country: INT
+    language: en
+    category: economy
+    frequency: 2h
+    rights: "GDELT DOC 2.0 API, open data with attribution to the GDELT Project; max one request every 5 s. Linked articles keep their publishers' rights: link and own summary only."
+    theme: economy
+  - id: lemonde-politique
+    name: Le Monde
+    type: rss
+    url: https://www.lemonde.fr/politique/rss_full.xml
+    country: FR
+    language: fr
+    category: politics
+    frequency: 1h
+    group: Groupe Le Monde
+    rights: Copyrighted press content (all rights reserved). Use only the link, the outlet name and your own factual summary; never copy text or images. Feed terms not reviewed for commercial reuse.
+    theme: politics
+  - id: franceinfo-politique
+    name: franceinfo
+    type: rss
+    url: https://www.francetvinfo.fr/politique.rss
+    country: FR
+    language: fr
+    category: politics
+    frequency: 1h
+    group: France Télévisions
+    rights: Copyrighted press content (all rights reserved). Use only the link, the outlet name and your own factual summary; never copy text or images. Feed terms not reviewed for commercial reuse.
+    theme: politics
+  - id: figaro-politique
+    name: Le Figaro
+    type: rss
+    url: https://www.lefigaro.fr/rss/figaro_politique.xml
+    country: FR
+    language: fr
+    category: politics
+    frequency: 1h
+    group: Groupe Figaro
+    rights: Copyrighted press content (all rights reserved). Use only the link, the outlet name and your own factual summary; never copy text or images. Feed terms not reviewed for commercial reuse.
+    theme: politics
+  - id: liberation-politique
+    name: Libération
+    type: rss
+    url: https://www.liberation.fr/arc/outboundfeeds/rss-all/category/politique/?outputType=xml
+    country: FR
+    language: fr
+    category: politics
+    frequency: 1h
+    rights: Copyrighted press content (all rights reserved). Use only the link, the outlet name and your own factual summary; never copy text or images. Feed terms not reviewed for commercial reuse.
+    theme: politics
+  - id: bbc-politics
+    name: BBC News
+    type: rss
+    url: https://feeds.bbci.co.uk/news/politics/rss.xml
+    country: GB
+    language: en
+    category: politics
+    frequency: 1h
+    group: BBC
+    rights: BBC copyright. BBC feeds are offered for personal, non-commercial use (BBC terms of use); commercial reuse not cleared. Link and own summary only; never text or images.
+    theme: politics
+  - id: guardian-politics
+    name: The Guardian
+    type: rss
+    url: https://www.theguardian.com/politics/rss
+    country: GB
+    language: en
+    category: politics
+    frequency: 1h
+    group: Guardian Media Group
+    rights: Guardian News & Media copyright. Feeds for personal use; reusing content needs a Guardian Open Platform licence (not obtained). Link and own summary only.
+    theme: politics
+  - id: npr-politics
+    name: NPR
+    type: rss
+    url: https://feeds.npr.org/1014/rss.xml
+    country: US
+    language: en
+    category: politics
+    frequency: 1h
+    rights: NPR copyright. NPR terms allow its RSS feeds for personal, non-commercial use; commercial reuse not cleared. Link and own summary only.
+    theme: politics
+  - id: politico-politics
+    name: Politico
+    type: rss
+    url: https://rss.politico.com/politics-news.xml
+    country: US
+    language: en
+    category: politics
+    frequency: 1h
+    rights: Copyrighted press content (all rights reserved). Use only the link, the outlet name and your own factual summary; never copy text or images. Feed terms not reviewed for commercial reuse.
+    theme: politics
+  - id: franceinfo-economie
+    name: franceinfo
+    type: rss
+    url: https://www.francetvinfo.fr/economie.rss
+    country: FR
+    language: fr
+    category: economy
+    frequency: 1h
+    group: France Télévisions
+    rights: Copyrighted press content (all rights reserved). Use only the link, the outlet name and your own factual summary; never copy text or images. Feed terms not reviewed for commercial reuse.
+    theme: economy
+  - id: npr-economy
+    name: NPR
+    type: rss
+    url: https://feeds.npr.org/1017/rss.xml
+    country: US
+    language: en
+    category: economy
+    frequency: 1h
+    rights: NPR copyright. NPR terms allow its RSS feeds for personal, non-commercial use; commercial reuse not cleared. Link and own summary only.
+    theme: economy
+  - id: lequipe
+    name: L'Équipe
+    type: rss
+    url: https://dwh.lequipe.fr/api/edito/rss?path=/
+    country: FR
+    language: fr
+    category: sport
+    frequency: 1h
+    group: Groupe Amaury
+    rights: Copyrighted press content (all rights reserved). Use only the link, the outlet name and your own factual summary; never copy text or images. Feed terms not reviewed for commercial reuse.
+    theme: sport
+  - id: franceinfo-sports
+    name: franceinfo
+    type: rss
+    url: https://www.francetvinfo.fr/sports.rss
+    country: FR
+    language: fr
+    category: sport
+    frequency: 1h
+    group: France Télévisions
+    rights: Copyrighted press content (all rights reserved). Use only the link, the outlet name and your own factual summary; never copy text or images. Feed terms not reviewed for commercial reuse.
+    theme: sport
+  - id: lemonde-sport
+    name: Le Monde
+    type: rss
+    url: https://www.lemonde.fr/sport/rss_full.xml
+    country: FR
+    language: fr
+    category: sport
+    frequency: 1h
+    group: Groupe Le Monde
+    rights: Copyrighted press content (all rights reserved). Use only the link, the outlet name and your own factual summary; never copy text or images. Feed terms not reviewed for commercial reuse.
+    theme: sport
+  - id: rmc-sport
+    name: RMC Sport
+    type: rss
+    url: https://rmcsport.bfmtv.com/rss/fil-sport/
+    country: FR
+    language: fr
+    category: sport
+    frequency: 1h
+    group: RMC BFM
+    rights: Copyrighted press content (all rights reserved). Use only the link, the outlet name and your own factual summary; never copy text or images. Feed terms not reviewed for commercial reuse.
+    theme: sport
+  - id: bbc-sport
+    name: BBC Sport
+    type: rss
+    url: https://feeds.bbci.co.uk/sport/rss.xml
+    country: GB
+    language: en
+    category: sport
+    frequency: 1h
+    group: BBC
+    rights: BBC copyright. BBC feeds are offered for personal, non-commercial use (BBC terms of use); commercial reuse not cleared. Link and own summary only; never text or images.
+    theme: sport
+  - id: guardian-sport
+    name: The Guardian
+    type: rss
+    url: https://www.theguardian.com/uk/sport/rss
+    country: GB
+    language: en
+    category: sport
+    frequency: 1h
+    group: Guardian Media Group
+    rights: Guardian News & Media copyright. Feeds for personal use; reusing content needs a Guardian Open Platform licence (not obtained). Link and own summary only.
+    theme: sport
+  - id: espn
+    name: ESPN
+    type: rss
+    url: https://www.espn.com/espn/rss/news
+    country: US
+    language: en
+    category: sport
+    frequency: 1h
+    rights: Copyrighted press content (all rights reserved). Use only the link, the outlet name and your own factual summary; never copy text or images. Feed terms not reviewed for commercial reuse.
+    theme: sport
+  - id: allocine
+    name: AlloCiné
+    type: rss
+    url: https://www.allocine.fr/rss/news.xml
+    country: FR
+    language: fr
+    category: entertainment
+    frequency: 1h
+    group: Webedia
+    rights: Copyrighted press content (all rights reserved). Use only the link, the outlet name and your own factual summary; never copy text or images. Feed terms not reviewed for commercial reuse.
+    theme: entertainment
+  - id: 20minutes-people
+    name: 20 Minutes
+    type: rss
+    url: https://www.20minutes.fr/feeds/rss-people.xml
+    country: FR
+    language: fr
+    category: entertainment
+    frequency: 1h
+    group: 20 Minutes (Rossel/Ouest-France)
+    rights: Copyrighted press content (all rights reserved). Use only the link, the outlet name and your own factual summary; never copy text or images. Feed terms not reviewed for commercial reuse.
+    theme: entertainment
+  - id: 20minutes-tv
+    name: 20 Minutes
+    type: rss
+    url: https://www.20minutes.fr/feeds/rss-television.xml
+    country: FR
+    language: fr
+    category: entertainment
+    frequency: 1h
+    group: 20 Minutes (Rossel/Ouest-France)
+    rights: Copyrighted press content (all rights reserved). Use only the link, the outlet name and your own factual summary; never copy text or images. Feed terms not reviewed for commercial reuse.
+    theme: entertainment
+  - id: bbc-entertainment
+    name: BBC News
+    type: rss
+    url: https://feeds.bbci.co.uk/news/entertainment_and_arts/rss.xml
+    country: GB
+    language: en
+    category: entertainment
+    frequency: 1h
+    group: BBC
+    rights: BBC copyright. BBC feeds are offered for personal, non-commercial use (BBC terms of use); commercial reuse not cleared. Link and own summary only; never text or images.
+    theme: entertainment
+  - id: variety
+    name: Variety
+    type: rss
+    url: https://variety.com/feed/
+    country: US
+    language: en
+    category: entertainment
+    frequency: 1h
+    group: Penske Media
+    rights: Copyrighted press content (all rights reserved). Use only the link, the outlet name and your own factual summary; never copy text or images. Feed terms not reviewed for commercial reuse.
+    theme: entertainment
+  - id: hollywoodreporter
+    name: The Hollywood Reporter
+    type: rss
+    url: https://www.hollywoodreporter.com/feed/
+    country: US
+    language: en
+    category: entertainment
+    frequency: 1h
+    group: Penske Media
+    rights: Copyrighted press content (all rights reserved). Use only the link, the outlet name and your own factual summary; never copy text or images. Feed terms not reviewed for commercial reuse.
+    theme: entertainment
+  - id: guardian-film
+    name: The Guardian
+    type: rss
+    url: https://www.theguardian.com/film/rss
+    country: GB
+    language: en
+    category: entertainment
+    frequency: 1h
+    group: Guardian Media Group
+    rights: Guardian News & Media copyright. Feeds for personal use; reusing content needs a Guardian Open Platform licence (not obtained). Link and own summary only.
+    theme: entertainment
+  - id: lemonde-culture
+    name: Le Monde
+    type: rss
+    url: https://www.lemonde.fr/culture/rss_full.xml
+    country: FR
+    language: fr
+    category: culture
+    frequency: 1h
+    group: Groupe Le Monde
+    rights: Copyrighted press content (all rights reserved). Use only the link, the outlet name and your own factual summary; never copy text or images. Feed terms not reviewed for commercial reuse.
+    theme: culture
+  - id: franceinfo-culture
+    name: franceinfo
+    type: rss
+    url: https://www.francetvinfo.fr/culture.rss
+    country: FR
+    language: fr
+    category: culture
+    frequency: 1h
+    group: France Télévisions
+    rights: Copyrighted press content (all rights reserved). Use only the link, the outlet name and your own factual summary; never copy text or images. Feed terms not reviewed for commercial reuse.
+    theme: culture
+  - id: figaro-culture
+    name: Le Figaro
+    type: rss
+    url: https://www.lefigaro.fr/rss/figaro_culture.xml
+    country: FR
+    language: fr
+    category: culture
+    frequency: 1h
+    group: Groupe Figaro
+    rights: Copyrighted press content (all rights reserved). Use only the link, the outlet name and your own factual summary; never copy text or images. Feed terms not reviewed for commercial reuse.
+    theme: culture
+  - id: telerama
+    name: Télérama
+    type: rss
+    url: https://www.telerama.fr/rss/une.xml
+    country: FR
+    language: fr
+    category: culture
+    frequency: 1h
+    group: Groupe Le Monde
+    rights: Copyrighted press content (all rights reserved). Use only the link, the outlet name and your own factual summary; never copy text or images. Feed terms not reviewed for commercial reuse.
+    theme: culture
+  - id: guardian-culture
+    name: The Guardian
+    type: rss
+    url: https://www.theguardian.com/culture/rss
+    country: GB
+    language: en
+    category: culture
+    frequency: 1h
+    group: Guardian Media Group
+    rights: Guardian News & Media copyright. Feeds for personal use; reusing content needs a Guardian Open Platform licence (not obtained). Link and own summary only.
+    theme: culture
+  - id: npr-arts
+    name: NPR
+    type: rss
+    url: https://feeds.npr.org/1008/rss.xml
+    country: US
+    language: en
+    category: culture
+    frequency: 1h
+    rights: NPR copyright. NPR terms allow its RSS feeds for personal, non-commercial use; commercial reuse not cleared. Link and own summary only.
+    theme: culture
+  - id: smithsonian-arts
+    name: Smithsonian Magazine
+    type: rss
+    url: https://www.smithsonianmag.com/rss/arts-culture/
+    country: US
+    language: en
+    category: culture
+    frequency: 1h
+    rights: Copyrighted press content (all rights reserved). Use only the link, the outlet name and your own factual summary; never copy text or images. Feed terms not reviewed for commercial reuse.
+    theme: culture
+  - id: franceinfo-faitsdivers
+    name: franceinfo
+    type: rss
+    url: https://www.francetvinfo.fr/faits-divers.rss
+    country: FR
+    language: fr
+    category: crime_justice
+    frequency: 1h
+    group: France Télévisions
+    rights: Copyrighted press content (all rights reserved). Use only the link, the outlet name and your own factual summary; never copy text or images. Feed terms not reviewed for commercial reuse.
+    theme: crime_justice
+  - id: lemonde-police-justice
+    name: Le Monde
+    type: rss
+    url: https://www.lemonde.fr/police-justice/rss_full.xml
+    country: FR
+    language: fr
+    category: crime_justice
+    frequency: 1h
+    group: Groupe Le Monde
+    rights: Copyrighted press content (all rights reserved). Use only the link, the outlet name and your own factual summary; never copy text or images. Feed terms not reviewed for commercial reuse.
+    theme: crime_justice
+  - id: franceinfo-justice
+    name: franceinfo
+    type: rss
+    url: https://www.francetvinfo.fr/faits-divers/justice-proces.rss
+    country: FR
+    language: fr
+    category: crime_justice
+    frequency: 1h
+    group: France Télévisions
+    rights: Copyrighted press content (all rights reserved). Use only the link, the outlet name and your own factual summary; never copy text or images. Feed terms not reviewed for commercial reuse.
+    theme: crime_justice
+  - id: guardian-law
+    name: The Guardian
+    type: rss
+    url: https://www.theguardian.com/law/rss
+    country: GB
+    language: en
+    category: crime_justice
+    frequency: 1h
+    group: Guardian Media Group
+    rights: Guardian News & Media copyright. Feeds for personal use; reusing content needs a Guardian Open Platform licence (not obtained). Link and own summary only.
+    theme: crime_justice
+  - id: guardian-ukcrime
+    name: The Guardian
+    type: rss
+    url: https://www.theguardian.com/uk/ukcrime/rss
+    country: GB
+    language: en
+    category: crime_justice
+    frequency: 1h
+    group: Guardian Media Group
+    rights: Guardian News & Media copyright. Feeds for personal use; reusing content needs a Guardian Open Platform licence (not obtained). Link and own summary only.
+    theme: crime_justice
+  - id: npr-law
+    name: NPR
+    type: rss
+    url: https://feeds.npr.org/1070/rss.xml
+    country: US
+    language: en
+    category: crime_justice
+    frequency: 1h
+    rights: NPR copyright. NPR terms allow its RSS feeds for personal, non-commercial use; commercial reuse not cleared. Link and own summary only.
+    theme: crime_justice
+  - id: doj-news
+    name: U.S. Department of Justice
+    type: rss
+    url: https://www.justice.gov/news/rss?type=press_release
+    country: US
+    language: en
+    category: crime_justice
+    frequency: 3h
+    official: true
+    rights: "Official US federal work, generally public domain in the US (17 U.S.C. 105). Press releases name people who are only charged: apply the crime and justice rules (presumption of innocence, no private names)."
+    theme: crime_justice
+  - id: lemonde-international
+    name: Le Monde
+    type: rss
+    url: https://www.lemonde.fr/international/rss_full.xml
+    country: FR
+    language: fr
+    category: international
+    frequency: 1h
+    group: Groupe Le Monde
+    rights: Copyrighted press content (all rights reserved). Use only the link, the outlet name and your own factual summary; never copy text or images. Feed terms not reviewed for commercial reuse.
+    theme: international
+  - id: france24-fr
+    name: France 24
+    type: rss
+    url: https://www.france24.com/fr/rss
+    country: FR
+    language: fr
+    category: international
+    frequency: 1h
+    group: France Médias Monde
+    rights: Copyrighted press content (all rights reserved). Use only the link, the outlet name and your own factual summary; never copy text or images. Feed terms not reviewed for commercial reuse.
+    theme: international
+  - id: rfi
+    name: RFI
+    type: rss
+    url: https://www.rfi.fr/fr/rss
+    country: FR
+    language: fr
+    category: international
+    frequency: 1h
+    group: France Médias Monde
+    rights: Copyrighted press content (all rights reserved). Use only the link, the outlet name and your own factual summary; never copy text or images. Feed terms not reviewed for commercial reuse.
+    theme: international
+  - id: franceinfo-monde
+    name: franceinfo
+    type: rss
+    url: https://www.francetvinfo.fr/monde.rss
+    country: FR
+    language: fr
+    category: international
+    frequency: 1h
+    group: France Télévisions
+    rights: Copyrighted press content (all rights reserved). Use only the link, the outlet name and your own factual summary; never copy text or images. Feed terms not reviewed for commercial reuse.
+    theme: international
+  - id: bbc-world
+    name: BBC News
+    type: rss
+    url: https://feeds.bbci.co.uk/news/world/rss.xml
+    country: GB
+    language: en
+    category: international
+    frequency: 1h
+    group: BBC
+    rights: BBC copyright. BBC feeds are offered for personal, non-commercial use (BBC terms of use); commercial reuse not cleared. Link and own summary only; never text or images.
+    theme: international
+  - id: guardian-world
+    name: The Guardian
+    type: rss
+    url: https://www.theguardian.com/world/rss
+    country: GB
+    language: en
+    category: international
+    frequency: 1h
+    group: Guardian Media Group
+    rights: Guardian News & Media copyright. Feeds for personal use; reusing content needs a Guardian Open Platform licence (not obtained). Link and own summary only.
+    theme: international
+  - id: aljazeera
+    name: Al Jazeera
+    type: rss
+    url: https://www.aljazeera.com/xml/rss/all.xml
+    country: QA
+    language: en
+    category: international
+    frequency: 1h
+    rights: Copyrighted press content (all rights reserved). Use only the link, the outlet name and your own factual summary; never copy text or images. Feed terms not reviewed for commercial reuse.
+    theme: international
+  - id: npr-world
+    name: NPR
+    type: rss
+    url: https://feeds.npr.org/1004/rss.xml
+    country: US
+    language: en
+    category: international
+    frequency: 1h
+    rights: NPR copyright. NPR terms allow its RSS feeds for personal, non-commercial use; commercial reuse not cleared. Link and own summary only.
+    theme: international
+  - id: un-news
+    name: UN News
+    type: rss
+    url: https://news.un.org/feed/subscribe/en/news/all/rss.xml
+    country: INT
+    language: en
+    category: international
+    frequency: 3h
+    official: true
+    rights: Official international body. (c) United Nations; UN terms of use allow reproduction of UN News text with attribution in some cases (verify). Link and own summary.
+    theme: international
+  - id: lemonde-sciences
+    name: Le Monde
+    type: rss
+    url: https://www.lemonde.fr/sciences/rss_full.xml
+    country: FR
+    language: fr
+    category: science
+    frequency: 1h
+    group: Groupe Le Monde
+    rights: Copyrighted press content (all rights reserved). Use only the link, the outlet name and your own factual summary; never copy text or images. Feed terms not reviewed for commercial reuse.
+    theme: science
+  - id: futura
+    name: Futura
+    type: rss
+    url: https://www.futura-sciences.com/rss/actualites.xml
+    country: FR
+    language: fr
+    category: science
+    frequency: 1h
+    rights: Copyrighted press content (all rights reserved). Use only the link, the outlet name and your own factual summary; never copy text or images. Feed terms not reviewed for commercial reuse.
+    theme: science
+  - id: sciencesetavenir
+    name: Sciences et Avenir
+    type: rss
+    url: https://www.sciencesetavenir.fr/rss.xml
+    country: FR
+    language: fr
+    category: science
+    frequency: 1h
+    rights: Copyrighted press content (all rights reserved). Use only the link, the outlet name and your own factual summary; never copy text or images. Feed terms not reviewed for commercial reuse.
+    theme: science
+  - id: cnrs
+    name: CNRS
+    type: rss
+    url: https://www.cnrs.fr/fr/rss.xml
+    country: FR
+    language: fr
+    category: science
+    frequency: 3h
+    official: true
+    rights: Official French research body. (c) CNRS, reuse terms not reviewed (verify its legal notice). Link and own summary.
+    theme: science
+  - id: guardian-science
+    name: The Guardian
+    type: rss
+    url: https://www.theguardian.com/science/rss
+    country: GB
+    language: en
+    category: science
+    frequency: 1h
+    group: Guardian Media Group
+    rights: Guardian News & Media copyright. Feeds for personal use; reusing content needs a Guardian Open Platform licence (not obtained). Link and own summary only.
+    theme: science
+  - id: nasa-news
+    name: NASA
+    type: rss
+    url: https://www.nasa.gov/news-release/feed/
+    country: US
+    language: en
+    category: science
+    frequency: 3h
+    official: true
+    rights: Official. NASA text and most media are US federal works, generally not copyrighted in the US (NASA media guidelines); the NASA insignia and third-party images are restricted. Link and own summary.
+    theme: science
+  - id: sciencedaily
+    name: ScienceDaily
+    type: rss
+    url: https://www.sciencedaily.com/rss/all.xml
+    country: US
+    language: en
+    category: science
+    frequency: 1h
+    rights: Copyrighted press content (all rights reserved). Use only the link, the outlet name and your own factual summary; never copy text or images. Feed terms not reviewed for commercial reuse.
+    theme: science
+  - id: bbc-science
+    name: BBC News
+    type: rss
+    url: https://feeds.bbci.co.uk/news/science_and_environment/rss.xml
+    country: GB
+    language: en
+    category: science
+    frequency: 1h
+    group: BBC
+    rights: BBC copyright. BBC feeds are offered for personal, non-commercial use (BBC terms of use); commercial reuse not cleared. Link and own summary only; never text or images.
+    theme: science
+  - id: lemonde-planete
+    name: Le Monde
+    type: rss
+    url: https://www.lemonde.fr/planete/rss_full.xml
+    country: FR
+    language: fr
+    category: climate
+    frequency: 1h
+    group: Groupe Le Monde
+    rights: Copyrighted press content (all rights reserved). Use only the link, the outlet name and your own factual summary; never copy text or images. Feed terms not reviewed for commercial reuse.
+    theme: climate
+  - id: reporterre
+    name: Reporterre
+    type: rss
+    url: https://reporterre.net/spip.php?page=backend
+    country: FR
+    language: fr
+    category: climate
+    frequency: 1h
+    rights: "Reporterre is free to read; its reuse licence was not verified: treat as all rights reserved. Link and own summary only."
+    theme: climate
+  - id: vert
+    name: Vert
+    type: rss
+    url: https://vert.eco/feed
+    country: FR
+    language: fr
+    category: climate
+    frequency: 1h
+    rights: Copyrighted press content (all rights reserved). Use only the link, the outlet name and your own factual summary; never copy text or images. Feed terms not reviewed for commercial reuse.
+    theme: climate
+  - id: guardian-environment
+    name: The Guardian
+    type: rss
+    url: https://www.theguardian.com/environment/rss
+    country: GB
+    language: en
+    category: climate
+    frequency: 1h
+    group: Guardian Media Group
+    rights: Guardian News & Media copyright. Feeds for personal use; reusing content needs a Guardian Open Platform licence (not obtained). Link and own summary only.
+    theme: climate
+  - id: carbonbrief
+    name: Carbon Brief
+    type: rss
+    url: https://www.carbonbrief.org/feed/
+    country: GB
+    language: en
+    category: climate
+    frequency: 1h
+    rights: "Carbon Brief states that its content is licensed CC BY-NC-ND 4.0 (not verified per article): non-commercial, no derivatives. Link and own summary only."
+    theme: climate
+  - id: insideclimate
+    name: Inside Climate News
+    type: rss
+    url: https://insideclimatenews.org/feed/
+    country: US
+    language: en
+    category: climate
+    frequency: 1h
+    rights: Copyrighted; Inside Climate News offers free republication of many stories under its own republishing terms (not reviewed). Link and own summary only.
+    theme: climate
+  - id: lemonde-sante
+    name: Le Monde
+    type: rss
+    url: https://www.lemonde.fr/sante/rss_full.xml
+    country: FR
+    language: fr
+    category: health
+    frequency: 1h
+    group: Groupe Le Monde
+    rights: Copyrighted press content (all rights reserved). Use only the link, the outlet name and your own factual summary; never copy text or images. Feed terms not reviewed for commercial reuse.
+    theme: health
+  - id: franceinfo-sante
+    name: franceinfo
+    type: rss
+    url: https://www.francetvinfo.fr/sante.rss
+    country: FR
+    language: fr
+    category: health
+    frequency: 1h
+    group: France Télévisions
+    rights: Copyrighted press content (all rights reserved). Use only the link, the outlet name and your own factual summary; never copy text or images. Feed terms not reviewed for commercial reuse.
+    theme: health
+  - id: figaro-sante
+    name: Le Figaro
+    type: rss
+    url: https://www.lefigaro.fr/rss/figaro_sante.xml
+    country: FR
+    language: fr
+    category: health
+    frequency: 1h
+    group: Groupe Figaro
+    rights: Copyrighted press content (all rights reserved). Use only the link, the outlet name and your own factual summary; never copy text or images. Feed terms not reviewed for commercial reuse.
+    theme: health
+  - id: who-news
+    name: World Health Organization
+    type: rss
+    url: https://www.who.int/rss-feeds/news-english.xml
+    country: INT
+    language: en
+    category: health
+    frequency: 3h
+    official: true
+    rights: Official international body. (c) WHO; its copyright page allows many items under CC BY-NC-SA 3.0 IGO (non-commercial, verify per item). Link and own summary.
+    theme: health
+  - id: bbc-health
+    name: BBC News
+    type: rss
+    url: https://feeds.bbci.co.uk/news/health/rss.xml
+    country: GB
+    language: en
+    category: health
+    frequency: 1h
+    group: BBC
+    rights: BBC copyright. BBC feeds are offered for personal, non-commercial use (BBC terms of use); commercial reuse not cleared. Link and own summary only; never text or images.
+    theme: health
+  - id: npr-health
+    name: NPR
+    type: rss
+    url: https://feeds.npr.org/1128/rss.xml
+    country: US
+    language: en
+    category: health
+    frequency: 1h
+    rights: NPR copyright. NPR terms allow its RSS feeds for personal, non-commercial use; commercial reuse not cleared. Link and own summary only.
+    theme: health
+  - id: guardian-health
+    name: The Guardian
+    type: rss
+    url: https://www.theguardian.com/society/health/rss
+    country: GB
+    language: en
+    category: health
+    frequency: 1h
+    group: Guardian Media Group
+    rights: Guardian News & Media copyright. Feeds for personal use; reusing content needs a Guardian Open Platform licence (not obtained). Link and own summary only.
+    theme: health
+  - id: bbc-technology
+    name: BBC News
+    type: rss
+    url: https://feeds.bbci.co.uk/news/technology/rss.xml
+    country: GB
+    language: en
+    category: tech
+    frequency: 1h
+    group: BBC
+    rights: BBC copyright. BBC feeds are offered for personal, non-commercial use (BBC terms of use); commercial reuse not cleared. Link and own summary only; never text or images.
+    theme: tech
+  - id: guardian-technology
+    name: The Guardian
+    type: rss
+    url: https://www.theguardian.com/uk/technology/rss
+    country: GB
+    language: en
+    category: tech
+    frequency: 1h
+    group: Guardian Media Group
+    rights: Guardian News & Media copyright. Feeds for personal use; reusing content needs a Guardian Open Platform licence (not obtained). Link and own summary only.
+    theme: tech
+  - id: arstechnica
+    name: Ars Technica
+    type: rss
+    url: https://feeds.arstechnica.com/arstechnica/index
+    country: US
+    language: en
+    category: tech
+    frequency: 1h
+    group: Condé Nast
+    rights: Copyrighted press content (all rights reserved). Use only the link, the outlet name and your own factual summary; never copy text or images. Feed terms not reviewed for commercial reuse.
+    theme: tech
+  - id: theverge
+    name: The Verge
+    type: rss
+    url: https://www.theverge.com/rss/index.xml
+    country: US
+    language: en
+    category: tech
+    frequency: 1h
+    group: Vox Media
+    rights: Copyrighted press content (all rights reserved). Use only the link, the outlet name and your own factual summary; never copy text or images. Feed terms not reviewed for commercial reuse.
+    theme: tech
