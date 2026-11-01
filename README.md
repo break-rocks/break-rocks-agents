@@ -13,6 +13,12 @@ Every agent lives in its own folder, with its whole life cycle:
 
 > Work in progress: the first agents are on their way. Watch the repository to follow them.
 
+## Agents
+
+| Agent | What it does | Status |
+|---|---|---|
+| [news](news/) | One post per news event, with its sources, updated as the story evolves; run by your own AI through MCP | prototype |
+
 ## Layout
 
 ```
