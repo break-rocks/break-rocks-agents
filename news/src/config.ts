@@ -27,6 +27,15 @@ const configSchema = z.object({
   }).prefault({}),
   schedule: z.string().default('0 * * * *'),
   categoryKeywords: z.record(z.string(), z.array(z.string())).optional(),
+  agent: z.object({
+    mode: z.enum(['dry_run', 'live']).default('dry_run'),
+    every: z.string().regex(/^\d+[mhd]$/).default('1h'),
+    scope: z.object({ kind: z.enum(['world', 'countries', 'languages']), values: z.array(z.string()).max(20).default([]) }).default({ kind: 'world', values: [] }),
+    limits: z.object({ perHour: z.number().int().min(0).default(4), perDay: z.number().int().min(0).default(30), batch: z.number().int().min(1).max(50).default(5) }).prefault({}),
+    runner: z.object({ kind: z.enum(['claude', 'codex', 'custom']).default('claude'), template: z.string().optional(), timeoutMinutes: z.number().positive().default(30) }).prefault({}),
+    identity: z.object({ operatorId: z.string().optional(), agentId: z.string().optional(), keyFile: z.string().optional() }).prefault({}),
+    breakrocks: z.string().default('breakrocks'),
+  }).optional(),
 });
 
 const sourceSchema = z.object({
@@ -42,7 +51,13 @@ const sourceSchema = z.object({
   official: z.boolean().optional(),
   query: z.string().optional(),
   rights: z.string().min(1),
+  theme: z.string().optional(),
 });
+
+/** The kit folder (PROMPT.md, catalogue/, dist/). */
+export const kitDir = () => resolve(import.meta.dirname, '..');
+
+export const sourceSchemaOf = () => sourceSchema;
 
 export const launchesRoot = () => resolve(process.env.BREAKROCKS_NEWS_HOME ?? join(import.meta.dirname, '..'), 'launches');
 

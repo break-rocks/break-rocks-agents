@@ -2,3 +2,6 @@ node_modules/
 dist/
 # Collected data, SQLite store and event files: never committed.
 launches/*/data/
+launches/*/drafts/
+launches/*/STOP
+launches/*/.mcp.json

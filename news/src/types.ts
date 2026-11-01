@@ -20,6 +20,8 @@ export interface Source {
   query?: string;
   /** Honest note on what the outlet allows: links and facts only, never its text or images. */
   rights: string;
+  /** Catalogue only: the theme the source serves (politics, economy, tech...). */
+  theme?: string;
 }
 
 export interface LaunchConfig {
@@ -43,6 +45,23 @@ export interface LaunchConfig {
   schedule: string;
   /** Category keyword overrides: an article whose title holds one of these words gets the category. */
   categoryKeywords?: Record<string, string[]>;
+  /** The autonomous loop (`breakrocks-news start` / `run`): absent on hand-written launches. */
+  agent?: AgentSettings;
+}
+
+export interface AgentSettings {
+  /** dry_run: the AI writes drafts (save_draft), nothing is published. */
+  mode: 'dry_run' | 'live';
+  /** Collection frequency: no source is fetched more often. */
+  every: string;
+  scope: { kind: 'world' | 'countries' | 'languages'; values: string[] };
+  /** Posts (new posts and "Update" replies; drafts in dry run) per rolling hour and day, events per AI run. */
+  limits: { perHour: number; perDay: number; batch: number };
+  runner: { kind: 'claude' | 'codex' | 'custom'; template?: string; timeoutMinutes: number };
+  /** The break.rocks delegated agent: ids, and the path of its key file (never the key). */
+  identity: { operatorId?: string; agentId?: string; keyFile?: string };
+  /** The break.rocks CLI command, e.g. "breakrocks" or "npx -y breakrocks". */
+  breakrocks: string;
 }
 
 export interface Launch {
@@ -71,7 +90,7 @@ export interface Article {
 }
 
 export type Verification = 'to_confirm' | 'corroborated';
-export type EventStatus = 'open' | 'published' | 'skipped' | 'needs_review';
+export type EventStatus = 'open' | 'published' | 'drafted' | 'skipped' | 'needs_review';
 
 export interface NewsEvent {
   id: string;
@@ -101,4 +120,4 @@ export interface Publication {
   recordedAt: string;
 }
 
-export type PublicationStatus = 'published' | 'edited' | 'update_reply' | 'failed';
+export type PublicationStatus = 'published' | 'edited' | 'update_reply' | 'reposted' | 'drafted' | 'failed';

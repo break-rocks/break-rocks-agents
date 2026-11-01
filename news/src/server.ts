@@ -2,7 +2,7 @@
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { z } from 'zod';
 import { listLaunches, loadLaunch } from './config.js';
-import { collect, eventDetail, markEvent, pendingEvents, recordPublication } from './service.js';
+import { collect, eventDetail, markEvent, pendingEvents, recordPublication, saveDraft } from './service.js';
 
 const VERSION = '0.1.0';
 
@@ -40,12 +40,20 @@ export function createServer(): McpServer {
   }, wrap(({ launch: name, id }: { launch: string; id: string }) => eventDetail(loadLaunch(name), id)));
 
   server.registerTool('record_publication', {
-    title: 'Record a publication', description: 'Records what was published for an event: the break.rocks post id, the summary version (1 for the first post, +1 at each update), the exact text, and the status (published: new post; edited: the post was edited; update_reply: an "Update" reply was posted; failed: nothing went out). Keeps the full history.',
+    title: 'Record a publication', description: 'Records what was published for an event: the break.rocks post id, the summary version (1 for the first post, +1 at each update), the exact text, and the status (published: new post in the main universe; edited: the post was edited; update_reply: an "Update" reply was posted; reposted: the post was reposted into another universe, postId = the repost id; failed: nothing went out). Keeps the full history.',
     inputSchema: {
       launch, eventId: z.string(), postId: z.string().describe('The post id returned by breakrocks (the reply id for update_reply)'),
-      summaryVersion: z.number().int().min(1), text: z.string().min(1), status: z.enum(['published', 'edited', 'update_reply', 'failed']),
+      summaryVersion: z.number().int().min(1), text: z.string().min(1), status: z.enum(['published', 'edited', 'update_reply', 'reposted', 'failed']),
     },
-  }, wrap(({ launch: name, ...input }: { launch: string; eventId: string; postId: string; summaryVersion: number; text: string; status: 'published' | 'edited' | 'update_reply' | 'failed' }) => recordPublication(loadLaunch(name), input)));
+  }, wrap(({ launch: name, ...input }: { launch: string; eventId: string; postId: string; summaryVersion: number; text: string; status: 'published' | 'edited' | 'update_reply' | 'reposted' | 'failed' }) => recordPublication(loadLaunch(name), input)));
+
+  server.registerTool('save_draft', {
+    title: 'Save a draft (dry run)', description: 'Dry run only: instead of publishing, save the exact post you would publish (or the update reply / edited text) for an event to launches/<launch>/drafts/. Records it (status drafted) so the event does not come back. Nothing is sent to break.rocks.',
+    inputSchema: {
+      launch, eventId: z.string(), kind: z.enum(['new', 'update']), text: z.string().min(1).describe('The full post text, exactly as it would be published'),
+      universes: z.array(z.string()).min(1).describe('The main universe first, then the universes it would be reposted into'), summaryVersion: z.number().int().min(1).optional(),
+    },
+  }, wrap(({ launch: name, ...input }: { launch: string; eventId: string; kind: 'new' | 'update'; text: string; universes: string[]; summaryVersion?: number }) => saveDraft(loadLaunch(name), input)));
 
   server.registerTool('mark_event', {
     title: 'Mark an event', description: 'skipped: never publish it (off-topic, duplicate, not newsworthy). needs_review: a human must look at it (sensitive, unclear, contradictory sources).',

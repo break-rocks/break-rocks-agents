@@ -1,4 +1,5 @@
 // The operations behind the MCP tools: collect, pending events, event detail, publication record, marks.
+import { mkdirSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { assign, type Candidate, type Similarity } from './cluster.js';
 import { conditionalGet, itemsOf, requestUrl, type Fetcher } from './collect/fetchers.js';
@@ -168,7 +169,7 @@ export function recordPublication(launch: Launch, input: { eventId: string; post
     const sources = store.articlesOf(event.id).map((a) => a.url);
     store.tx(() => {
       store.addPublication({ ...input, verification: event.verification, sources, recordedAt: at });
-      if (input.status !== 'failed') {
+      if (input.status !== 'failed' && input.status !== 'drafted') {
         store.saveEvent({ ...event, status: 'published', published: { postId: event.published?.postId ?? input.postId, summaryVersion: input.summaryVersion, outlets: event.outlets, verification: event.verification, title: event.title, at } });
       }
     });
@@ -184,5 +185,34 @@ export function markEvent(launch: Launch, id: string, status: 'skipped' | 'needs
     store.setStatus(id, status);
     store.writeEventFile(id);
     return store.getEvent(id);
+  } finally { store.close(); }
+}
+
+/**
+ * Dry run: writes the post the AI would publish to launches/<name>/drafts/<eventId>-v<n>.md and records it
+ * (status drafted). A never-published event becomes "drafted" and stops coming back; a published one keeps
+ * its post and gets a fresh snapshot, as after an update.
+ */
+export function saveDraft(launch: Launch, input: { eventId: string; kind: 'new' | 'update'; text: string; universes: string[]; summaryVersion?: number }) {
+  const store = openStore(launch);
+  try {
+    const event = store.getEvent(input.eventId);
+    if (!event) throw new Error(`Unknown event ${input.eventId} in ${launch.name}`);
+    const version = input.summaryVersion ?? (event.published?.summaryVersion ?? 0) + 1;
+    const dir = join(launch.dir, 'drafts');
+    mkdirSync(dir, { recursive: true });
+    const file = join(dir, `${event.id}-v${version}.md`);
+    const at = new Date().toISOString();
+    const front = ['---', `event: ${event.id}`, `kind: ${input.kind}`, `summaryVersion: ${version}`, `verification: ${event.verification}`, `universes: ${JSON.stringify(input.universes)}`,
+      `outlets: ${JSON.stringify(event.outlets)}`, `draftedAt: ${at}`, '---', ''].join('\n');
+    writeFileSync(file, `${front}${input.text.trim()}\n`);
+    const sources = store.articlesOf(event.id).map((a) => a.url);
+    store.tx(() => {
+      store.addPublication({ eventId: event.id, postId: `draft:${event.id}-v${version}`, summaryVersion: version, text: input.text, status: 'drafted', verification: event.verification, sources, recordedAt: at });
+      if (event.published) store.saveEvent({ ...event, published: { ...event.published, summaryVersion: version, outlets: event.outlets, verification: event.verification, title: event.title, at } });
+      else store.setStatus(event.id, 'drafted');
+    });
+    store.writeEventFile(event.id);
+    return { file, summaryVersion: version };
   } finally { store.close(); }
 }

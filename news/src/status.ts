@@ -22,7 +22,7 @@ export type Readiness = { kind: 'new' | 'update'; reasons: string[] } | { kind: 
  * - wait: not ready yet; none: nothing to do (skipped, needs_review, or up to date).
  */
 export function readiness(event: NewsEvent, config: Pick<LaunchConfig, 'verification'>): Readiness {
-  if (event.status === 'skipped' || event.status === 'needs_review') return { kind: 'none', reasons: [event.status] };
+  if (event.status === 'skipped' || event.status === 'needs_review' || event.status === 'drafted') return { kind: 'none', reasons: [event.status] };
   if (!event.published) {
     if (event.sensitive && event.verification !== 'corroborated') return { kind: 'wait', reasons: ['sensitive category: needs corroboration'] };
     if (event.verification === 'to_confirm' && !config.verification.publishUnconfirmed) return { kind: 'wait', reasons: ['single source: publishUnconfirmed is false'] };

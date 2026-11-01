@@ -100,6 +100,12 @@ export class Store {
     }));
   }
 
+  /** Publications of [statuses] recorded since [since] (ISO): what the hourly and daily caps count. */
+  publicationsSince(since: string, statuses: PublicationStatus[]): number {
+    const q = statuses.map(() => '?').join(',');
+    return Number((this.db.prepare(`SELECT COUNT(*) n FROM publications WHERE recorded_at >= ? AND status IN (${q})`).get(since, ...statuses) as Row).n);
+  }
+
   sourceState(sourceId: string): SourceState {
     const r = this.db.prepare('SELECT * FROM source_state WHERE source_id = ?').get(sourceId) as Row | undefined;
     return r ? { sourceId, etag: s(r.etag), lastModified: s(r.last_modified), lastFetchAt: s(r.last_fetch_at), lastStatus: s(r.last_status), lastCount: r.last_count === null ? undefined : Number(r.last_count) } : { sourceId };
