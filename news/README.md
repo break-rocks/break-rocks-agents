@@ -248,8 +248,8 @@ First real run on `fr-tech` (291 articles in 48 h, the same articles grouped bot
 | lexical | 271 | 8 |
 | embedding, threshold 0.75 | 263 | 14 |
 
-It groups "Pour Sam Altman, la RAM de votre PC…" with "Le patron d'OpenAI juge « terrible »…", and
-three outlets on Xavier Niel's "ignares incompétents". It also groups some stories that are only close
+It groups the French headlines "For Sam Altman, your PC's RAM…" and "OpenAI's boss finds … \"terrible\"…"
+(translated here), and three outlets on Xavier Niel's "ignorant incompetents". It also groups some stories that are only close
 (two AI-and-cybersecurity headlines); a lower threshold (0.6) made 27 multi-outlet events but many were
 topics rather than stories.
 
@@ -353,10 +353,10 @@ Dependencies are pinned and were at least 7 days old when added (`npm install --
 
 - Lexical grouping (the default) misses paraphrases ("OpenAI's boss" / "Sam Altman") and translations;
   the embedding backend catches many, but groups some stories that are only on the same topic, and a
-  small model does not know that "le patron d'OpenAI" is Sam Altman unless the headlines say more.
+  small model does not know that "OpenAI's boss" (in another language) is Sam Altman unless the headlines say more.
 - Grouping is single-link: one close member is enough to join an event, so events can drift. Events are
   merged, never split; two published events are never merged.
-- The promotion filter is heuristic: a news story about prices ("le chauffage le moins cher") can be
+- The promotion filter is heuristic: a news story about prices ("the cheapest heating") can be
   marked, and a deal written as news can pass; the prompt still asks the AI to skip what slips through.
 - Categories come from the source plus keywords: a crime story in a tech feed may slip through; the
   prompt asks the AI to mark such events `needs_review`.
