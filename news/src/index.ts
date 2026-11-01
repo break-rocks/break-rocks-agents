@@ -4,6 +4,7 @@ import { execFileSync } from 'node:child_process';
 import { writeFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
+import { commandBlock, writeStartScript } from './command.js';
 import { launchesRoot, loadLaunch } from './config.js';
 import { launchStatus, LockedError, runLoop, stopFile } from './loop.js';
 import { schedule, unschedule, type Scheduler } from './schedule.js';
@@ -60,7 +61,9 @@ async function main() {
         const answers = await completeAnswers(given, { home: home(), io, yes, skipUniverseCheck: !!flags['skip-universe-check'], existed: existed(home(), given.name) });
         const { dir, sources } = writeLaunch(home(), answers, loadCatalogue());
         console.log(`\n${answers.name}: ${sources.length} sources, ${answers.themes.join(', ')}, ${answers.mode === 'live' ? 'LIVE' : 'dry run (drafts in drafts/)'}; caps ${answers.perHour}/h, ${answers.perDay}/day; runner ${answers.runner.kind}.`);
-        console.log(`Written: ${dir}/{config.yaml,sources.yaml,start.yaml,.mcp.json}`);
+        console.log(`Written: ${dir}/{config.yaml,sources.yaml,start.yaml,start.sh,.mcp.json}`);
+        writeStartScript(dir, answers);
+        if (!yes) console.log(commandBlock(answers));
         if (flags['no-run']) { console.log(`Next: breakrocks-news run ${answers.name}   (or schedule ${answers.name})`); return; }
         io?.close();
         console.log(`Starting the loop (Ctrl-C to stop, or: breakrocks-news stop ${answers.name}).`);

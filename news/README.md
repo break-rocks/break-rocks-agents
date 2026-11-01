@@ -41,6 +41,36 @@ Operator id: / Agent id: / Path of the agent key file (PEM; read at run time, ne
 Mode: dry-run (drafts only) or live [dry-run]:
 ```
 
+Before the loop starts, `start` prints the complete equivalent command, so the questions never have to be
+answered again, and saves it as `launches/<name>/start.sh` (executable, mode 0700, next to `start.yaml`):
+
+```
+Run the same launch again without questions:
+
+breakrocks-news start --yes \
+  --name fr-tech \
+  --languages fr \
+  --themes tech,science \
+  --universe 'tech=%tech,%france' \
+  --universe 'science=%science' \
+  --every 30m \
+  --per-hour 4 \
+  --per-day 30 \
+  --batch 5 \
+  --verification corroborated \
+  --mode dry-run \
+  --runner claude
+
+or, from the saved answers:
+
+breakrocks-news start --yes --from launches/fr-tech/start.yaml
+```
+
+Values are shell-quoted (spaces, `%`, quotes), the agent key appears as `--agent-key-file <path>` only: its
+content and any secret are never printed or written. In live mode the command keeps `--mode live` and a
+comment line reminds that live with `--yes` only works on a launch that already exists (a new name always
+starts in dry run).
+
 The same without questions (`--yes` never asks; a missing required value is an error):
 
 ```sh
@@ -59,7 +89,7 @@ node dist/index.js start --yes --name fr-tech --languages fr --themes tech \
   `npx -y breakrocks`). `--from launches/<name>/start.yaml` replays saved answers; `--no-run` only writes.
 - **Files**: `launches/<name>/config.yaml` (with an `agent:` block), `sources.yaml` (picked from the shared
   [`catalogue/sources.yaml`](catalogue/sources.yaml): 132 checked feeds, every theme in French and English),
-  `start.yaml` (the answers) and `.mcp.json` (the `breakrocks-news` and `breakrocks mcp` servers). The key
+  `start.yaml` (the answers), `start.sh` (the same launch as one non-interactive command) and `.mcp.json` (the `breakrocks-news` and `breakrocks mcp` servers). The key
   is never written: its path is, and the loop reads it into `BREAKROCKS_AGENT_KEY` for the runner only.
 - **The loop** (`breakrocks-news run <launch>`, which `start` ends with): collect; if events are pending,
   one AI run with `PROMPT.md`, the launch context and a batch bounded by the hourly and daily caps (posts,
