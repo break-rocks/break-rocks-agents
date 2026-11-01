@@ -1,5 +1,7 @@
-// Launches: launches/<name>/config.yaml and sources.yaml.
-import { existsSync, readdirSync, readFileSync } from 'node:fs';
+// Launches: <news home>/launches/<name>/config.yaml and sources.yaml. The news home is
+// ~/.breakrocks/kits/news (D-235): BREAKROCKS_NEWS_HOME (or --home) first, else <breakrocks home>/kits/news.
+import { cpSync, existsSync, mkdirSync, readdirSync, readFileSync, renameSync, rmSync } from 'node:fs';
+import { homedir } from 'node:os';
 import { join, resolve } from 'node:path';
 import { parse } from 'yaml';
 import { z } from 'zod';
@@ -33,7 +35,7 @@ const configSchema = z.object({
     scope: z.object({ kind: z.enum(['world', 'countries', 'languages']), values: z.array(z.string()).max(20).default([]) }).default({ kind: 'world', values: [] }),
     limits: z.object({ perHour: z.number().int().min(0).default(4), perDay: z.number().int().min(0).default(30), batch: z.number().int().min(1).max(50).default(5) }).prefault({}),
     runner: z.object({ kind: z.enum(['claude', 'codex', 'custom']).default('claude'), template: z.string().optional(), timeoutMinutes: z.number().positive().default(30) }).prefault({}),
-    identity: z.object({ operatorId: z.string().optional(), agentId: z.string().optional(), keyFile: z.string().optional() }).prefault({}),
+    identity: z.object({ agent: z.string().optional(), env: z.enum(['dev', 'staging', 'prod']).optional(), operatorId: z.string().optional(), agentId: z.string().optional(), keyFile: z.string().optional() }).prefault({}),
     breakrocks: z.string().default('breakrocks'),
   }).optional(),
 });
@@ -59,7 +61,44 @@ export const kitDir = () => resolve(import.meta.dirname, '..');
 
 export const sourceSchemaOf = () => sourceSchema;
 
-export const launchesRoot = () => resolve(process.env.BREAKROCKS_NEWS_HOME ?? join(import.meta.dirname, '..'), 'launches');
+/** The breakrocks home, as the CLI resolves it: BREAKROCKS_HOME, %APPDATA%\breakrocks, $XDG_CONFIG_HOME/breakrocks, else ~/.breakrocks. */
+export function breakrocksHome(env: NodeJS.ProcessEnv = process.env, platform: NodeJS.Platform = process.platform): string {
+  if (env.BREAKROCKS_HOME) return resolve(env.BREAKROCKS_HOME);
+  if (platform === 'win32') return join(env.APPDATA ?? join(homedir(), 'AppData', 'Roaming'), 'breakrocks');
+  if (env.XDG_CONFIG_HOME) return join(env.XDG_CONFIG_HOME, 'breakrocks');
+  return join(env.HOME || homedir(), '.breakrocks');
+}
+
+/** The news home (the folder holding launches/): BREAKROCKS_NEWS_HOME, else <breakrocks home>/kits/news. */
+export const newsHome = (env: NodeJS.ProcessEnv = process.env) => resolve(env.BREAKROCKS_NEWS_HOME ?? join(breakrocksHome(env), 'kits', 'news'));
+
+export const launchesRoot = () => join(newsHome(), 'launches');
+
+/** The example launches of the kit (templates for `start --from-example`). */
+export const examplesDir = () => join(kitDir(), 'examples');
+
+/**
+ * Moves the launch folders left in the kit (launches/, up to 0.1) into the news home: copied, then
+ * removed from the kit; one already in the home is left where it is. Answers what moved and what did not.
+ */
+export function migrateKitLaunches(from = join(kitDir(), 'launches'), to = launchesRoot()): { moved: string[]; kept: string[] } {
+  const moved: string[] = [], kept: string[] = [];
+  if (!existsSync(from) || resolve(from) === resolve(to)) return { moved, kept };
+  mkdirSync(to, { recursive: true });
+  for (const d of readdirSync(from, { withFileTypes: true })) {
+    if (!d.isDirectory()) continue;
+    const src = join(from, d.name), dst = join(to, d.name);
+    if (!readdirSync(src).length) { rmSync(src, { recursive: true, force: true }); continue; }
+    if (existsSync(dst)) { kept.push(d.name); continue; }
+    try { renameSync(src, dst); } catch {
+      cpSync(src, dst, { recursive: true, preserveTimestamps: true });
+      rmSync(src, { recursive: true, force: true });
+    }
+    moved.push(d.name);
+  }
+  if (!readdirSync(from).length) rmSync(from, { recursive: true, force: true });
+  return { moved, kept };
+}
 
 export function listLaunches(root = launchesRoot()): string[] {
   if (!existsSync(root)) return [];

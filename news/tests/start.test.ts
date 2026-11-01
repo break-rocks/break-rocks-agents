@@ -1,15 +1,16 @@
-import { existsSync, mkdtempSync, readFileSync, writeFileSync } from 'node:fs';
+import { existsSync, mkdirSync, mkdtempSync, readFileSync, writeFileSync } from 'node:fs';
 import { hostname, tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { parse } from 'yaml';
 import { describe, expect, it } from 'vitest';
-import { loadLaunch } from '../src/config.js';
-import { acquireLock, allowance, LockedError, runCycle } from '../src/loop.js';
+import { kitDir, loadLaunch, migrateKitLaunches, newsHome } from '../src/config.js';
+import { doctorGate } from '../src/cli.js';
+import { acquireLock, allowance, LockedError, runCycle, runnerEnv } from '../src/loop.js';
 import { allowedTools, buildPrompt, codexMcpArgs, renderTemplate, TEMPLATES } from '../src/runner.js';
 import { cronLine, editCrontab, launchdPlist, systemdUnits } from '../src/schedule.js';
 import { ingest, openStore, pendingEvents, saveDraft } from '../src/service.js';
-import { answersSchema, cronOf, loadCatalogue, mcpConfig, selectSources, splitCommand, writeLaunch } from '../src/setup.js';
-import { answersFromFlags, checkUniverse, completeAnswers, parseFlags, type Io } from '../src/start.js';
+import { answersFromExample, answersSchema, cronOf, loadCatalogue, mcpConfig, selectSources, splitCommand, writeLaunch } from '../src/setup.js';
+import { answersFromFlags, checkUniverse, chooseAgent, completeAnswers, parseFlags, type Io } from '../src/start.js';
 import { art, source } from './helpers.js';
 
 const answers = (over = {}) => answersSchema.parse({ name: 'mini', scope: { kind: 'languages', values: ['fr'] }, themes: ['tech'], universes: { tech: ['%tech', '%tech-fr'] }, ...over });
@@ -81,9 +82,9 @@ describe('flags and wizard', () => {
   const show = (universes: Record<string, object>) => async (_c: string, u: string) => ({ universe: { exists: false, ...universes[u] } });
 
   it('asks for what is missing, re-asks a universe that forbids agents, confirms live', async () => {
-    const { io, asked, printed } = fakeIo(['mini', 'languages', 'fr', 'tech', '%closed', '%tech', '30m', '3', '20', 't', 'claude', '', '', 'live', 'live']);
-    const a = await completeAnswers({ breakrocks: 'breakrocks' }, { home: home(), io, yes: false, skipUniverseCheck: false, existed: false, show: show({ '%closed': { exists: true, agentsForbidden: true }, '%tech': { exists: true } }) });
-    expect(a).toMatchObject({ name: 'mini', scope: { kind: 'languages', values: ['fr'] }, themes: ['tech'], universes: { tech: ['%tech'] }, every: '30m', perHour: 3, perDay: 20, verification: 'to_confirm', mode: 'live', identity: {} });
+    const { io, asked, printed } = fakeIo(['mini', 'languages', 'fr', 'tech', '%closed', '%tech', '30m', '3', '20', 't', 'claude', 'live', 'live']);
+    const a = await completeAnswers({ breakrocks: 'breakrocks', identity: { agent: 'herald', env: 'dev' } }, { home: home(), io, yes: false, skipUniverseCheck: false, existed: false, show: show({ '%closed': { exists: true, agentsForbidden: true }, '%tech': { exists: true } }) });
+    expect(a).toMatchObject({ name: 'mini', scope: { kind: 'languages', values: ['fr'] }, themes: ['tech'], universes: { tech: ['%tech'] }, every: '30m', perHour: 3, perDay: 20, verification: 'to_confirm', mode: 'live', identity: { agent: 'herald', env: 'dev' } });
     expect(printed.join('\n')).toMatch(/%closed: exists, FORBIDS AGENTS/);
     expect(printed.join('\n')).toMatch(/%tech: exists, agent rule unknown/);
     expect(asked.at(-1)).toMatch(/Type "live"/);
@@ -91,9 +92,9 @@ describe('flags and wizard', () => {
 
   it('--yes never asks, fails on a missing name, and keeps the first start in dry run', async () => {
     await expect(completeAnswers({ themes: ['tech'] }, { home: home(), yes: true, skipUniverseCheck: true, existed: false })).rejects.toThrow(/--name/);
-    const a = await completeAnswers({ name: 'm', themes: ['tech'], universes: { tech: ['%t'] }, mode: 'live' }, { home: home(), yes: true, skipUniverseCheck: true, existed: false, io: fakeIo([]).io });
+    const a = await completeAnswers({ name: 'm', themes: ['tech'], universes: { tech: ['%t'] }, mode: 'live', identity: { agent: 'herald' } }, { home: home(), yes: true, skipUniverseCheck: true, existed: false, io: fakeIo([]).io });
     expect(a.mode).toBe('dry_run');
-    const b = await completeAnswers({ name: 'm', themes: ['tech'], universes: { tech: ['%t'] }, mode: 'live' }, { home: home(), yes: true, skipUniverseCheck: true, existed: true });
+    const b = await completeAnswers({ name: 'm', themes: ['tech'], universes: { tech: ['%t'] }, mode: 'live', identity: { agent: 'herald' } }, { home: home(), yes: true, skipUniverseCheck: true, existed: true });
     expect(b.mode).toBe('live');
   });
 
@@ -202,5 +203,72 @@ describe('scheduling', () => {
     expect(cronLine(spec)).toMatch(/^\*\/30 \* \* \* \* BREAKROCKS_NEWS_HOME='\/h & co' \/usr\/bin\/node .* # breakrocks-news:rocks.break.news.mini$/);
     const tab = editCrontab('0 1 * * * other\n', '# breakrocks-news:x', 'line # breakrocks-news:x');
     expect(editCrontab(tab, '# breakrocks-news:x')).toBe('0 1 * * * other\n');
+  });
+});
+
+describe('D-235: local agents, the news home, doctor', () => {
+  const fakeCli = (agents: { name: string; env: 'dev' | 'staging' | 'prod' }[], doctorOk = true) => {
+    const made: string[] = [];
+    const cli = {
+      localAgents: async () => agents.map((a) => ({ ...a, operatorId: 'op', agentId: `id-${a.name}`, keyStorage: 'keychain' })),
+      createAgent: async (n: string) => { made.push(n); agents.push({ name: n, env: 'dev' }); },
+      doctor: async () => ({ ok: doctorOk, checks: doctorOk ? [{ name: 'schema', status: 'ok' as const, detail: '' }] : [{ name: 'schema', status: 'fail' as const, detail: 'The API of dev lacks Universe.agentPostsForbidden' }] }),
+    };
+    return { cli, made };
+  };
+  const base = { home: '/h', yes: true, skipUniverseCheck: true, existed: false };
+
+  it('takes --agent with its environment, and writes `breakrocks mcp --agent <name> --env <env>`', async () => {
+    const { cli } = fakeCli([{ name: 'herald', env: 'dev' }]);
+    const a = await completeAnswers({ ...answers(), identity: { agent: 'herald' } }, { ...base, cli });
+    expect(a.identity).toEqual({ agent: 'herald', env: 'dev' });
+    expect(mcpConfig('/h', 'breakrocks', a.identity).mcpServers.breakrocks).toEqual({ command: 'breakrocks', args: ['mcp', '--agent', 'herald', '--env', 'dev'] });
+    await expect(completeAnswers({ ...answers(), identity: { agent: 'nobody' } }, { ...base, cli })).rejects.toThrow(/No local agent "nobody"/);
+  });
+
+  it('with --yes, takes the only local agent, else asks for --agent', async () => {
+    expect((await completeAnswers({ ...answers(), identity: {} }, { ...base, cli: fakeCli([{ name: 'solo', env: 'prod' }]).cli })).identity).toEqual({ agent: 'solo', env: 'prod' });
+    await expect(completeAnswers({ ...answers(), identity: {} }, { ...base, cli: fakeCli([{ name: 'a', env: 'dev' }, { name: 'b', env: 'dev' }]).cli })).rejects.toThrow(/Missing --agent: one of a, b/);
+  });
+
+  it('asks which local agent, or makes a new one', async () => {
+    const { cli, made } = fakeCli([{ name: 'herald', env: 'dev' }]);
+    const replies = ['2', 'scribe'];
+    const io: Io = { ask: async () => replies.shift() ?? '', print: () => undefined, close: () => undefined };
+    const a = await chooseAgent({}, { ...base, yes: false, io, cli });
+    expect(made).toEqual(['scribe']);
+    expect(a).toEqual({ agent: 'scribe', env: 'dev' });
+  });
+
+  it('stops before the loop when doctor fails, with its reasons', async () => {
+    await expect(doctorGate(fakeCli([], false).cli, 'herald', 'dev')).rejects.toThrow(/doctor failed for the agent "herald".*\n.*agentPostsForbidden/);
+    await expect(doctorGate(fakeCli([]).cli, 'herald', 'dev')).resolves.toMatchObject({ ok: true });
+  });
+
+  it('runs a local agent without any key in the environment', () => {
+    const env = runnerEnv({ identity: { agent: 'herald' } } as never, {});
+    expect(env).toEqual({ BREAKROCKS_AGENT: 'herald' });
+  });
+
+  it('keeps launches in ~/.breakrocks/kits/news, BREAKROCKS_NEWS_HOME first', () => {
+    expect(newsHome({ HOME: '/u' })).toBe(join('/u', '.breakrocks', 'kits', 'news'));
+    expect(newsHome({ HOME: '/u', BREAKROCKS_HOME: '/b' })).toBe(join('/b', 'kits', 'news'));
+    expect(newsHome({ BREAKROCKS_NEWS_HOME: '/n', BREAKROCKS_HOME: '/b' })).toBe('/n');
+  });
+
+  it('moves the launches left in the kit into the home, never over one there', () => {
+    const kit = home(), to = join(home(), 'launches');
+    for (const n of ['wheatley', 'clash']) { mkdirSync(join(kit, n), { recursive: true }); writeFileSync(join(kit, n, 'config.yaml'), `name: ${n}\n`); }
+    mkdirSync(join(kit, 'empty'));
+    mkdirSync(join(to, 'clash'), { recursive: true });
+    expect(migrateKitLaunches(kit, to)).toEqual({ moved: ['wheatley'], kept: ['clash'] });
+    expect(readFileSync(join(to, 'wheatley', 'config.yaml'), 'utf8')).toBe('name: wheatley\n');
+    expect(existsSync(join(kit, 'wheatley'))).toBe(false);
+    expect(existsSync(join(kit, 'clash', 'config.yaml'))).toBe(true);
+  });
+
+  it('turns an example of the kit into answers', () => {
+    const a = answersFromExample(join(kitDir(), 'examples', 'fr-tech', 'config.yaml'));
+    expect(a).toMatchObject({ themes: ['tech'], universes: { tech: ['%tech'] }, scope: { kind: 'languages', values: ['fr'] }, verification: 'to_confirm' });
   });
 });

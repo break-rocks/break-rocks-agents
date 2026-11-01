@@ -59,7 +59,8 @@ export interface AgentSettings {
   limits: { perHour: number; perDay: number; batch: number };
   runner: { kind: 'claude' | 'codex' | 'custom'; template?: string; timeoutMinutes: number };
   /** The break.rocks delegated agent: ids, and the path of its key file (never the key). */
-  identity: { operatorId?: string; agentId?: string; keyFile?: string };
+  /** agent: the local agent of the breakrocks CLI (D-235), with its environment; operatorId, agentId, keyFile: deprecated. */
+  identity: { agent?: string; env?: 'dev' | 'staging' | 'prod'; operatorId?: string; agentId?: string; keyFile?: string };
   /** The break.rocks CLI command, e.g. "breakrocks" or "npx -y breakrocks". */
   breakrocks: string;
 }

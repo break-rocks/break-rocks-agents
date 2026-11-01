@@ -66,13 +66,15 @@ const runsFile = (launch: Launch) => join(launch.dir, 'data', 'runs.jsonl');
 /** The environment of the runner: the agent's ids and key (read from its file, never printed). */
 export function runnerEnv(agent: AgentSettings, base: NodeJS.ProcessEnv = process.env): NodeJS.ProcessEnv {
   const env = { ...base };
+  // A local agent: the breakrocks CLI signs it in with the key of the system keychain (.mcp.json has --agent).
+  if (agent.identity.agent) { env.BREAKROCKS_AGENT = agent.identity.agent; return env; }
   if (agent.identity.operatorId) env.BREAKROCKS_OPERATOR_ID = agent.identity.operatorId;
   if (agent.identity.agentId) env.BREAKROCKS_AGENT_ID = agent.identity.agentId;
   if (agent.identity.keyFile) env.BREAKROCKS_AGENT_KEY = readFileSync(agent.identity.keyFile, 'utf8');
   return env;
 }
 
-export const hasIdentity = (agent: AgentSettings) => !!(agent.identity.operatorId && agent.identity.agentId && agent.identity.keyFile);
+export const hasIdentity = (agent: AgentSettings) => !!(agent.identity.agent || (agent.identity.operatorId && agent.identity.agentId && agent.identity.keyFile));
 
 export interface RunEntry {
   at: string; launch: string; mode: string; stopped?: boolean;
@@ -99,7 +101,7 @@ export async function runCycle(launch: Launch, deps: CycleDeps = {}): Promise<Ru
   entry.caps = { usedHour: used.hour, usedDay: used.day, allowance: allowance(agent.limits, used.hour, used.day) };
   if (!entry.pending || !entry.caps.allowance) return log(launch, entry);
   if (existsSync(stopFile(launch))) { entry.stopped = true; return log(launch, entry); }
-  if (agent.mode === 'live' && !hasIdentity(agent)) { entry.errors.push('live mode without a complete agent identity (operatorId, agentId, keyFile): no AI run'); return log(launch, entry); }
+  if (agent.mode === 'live' && !hasIdentity(agent)) { entry.errors.push('live mode without an agent (start --agent <name>): no AI run'); return log(launch, entry); }
 
   const logsDir = join(launch.dir, 'data', 'logs');
   mkdirSync(logsDir, { recursive: true });

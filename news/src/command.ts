@@ -1,5 +1,6 @@
 // The complete non-interactive command that replays a set of answers: printed at the end of the wizard
-// and saved as launches/<name>/start.sh. Never carries a secret: the key is a path, never its content.
+// and saved as <news home>/launches/<name>/start.sh. Never carries a secret: the agent is a name (its key
+// stays in the system keychain, with the breakrocks CLI); a deprecated key is a path, never its content.
 import { chmodSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import type { StartAnswers } from './setup.js';
@@ -24,6 +25,7 @@ export function startFlags(a: StartAnswers): string[][] {
   flags.push(['--mode', a.mode === 'live' ? 'live' : 'dry-run']);
   flags.push(['--runner', a.runner.kind]);
   if (a.runner.template) flags.push(['--runner-template', a.runner.template]);
+  if (a.identity.agent) flags.push(['--agent', a.identity.agent]);
   if (a.identity.operatorId) flags.push(['--operator-id', a.identity.operatorId]);
   if (a.identity.agentId) flags.push(['--agent-id', a.identity.agentId]);
   if (a.identity.keyFile) flags.push(['--agent-key-file', a.identity.keyFile]);
@@ -40,14 +42,15 @@ export function startCommand(a: StartAnswers): string {
   return a.mode === 'live' ? `${LIVE_NOTE}\n${command}` : command;
 }
 
-export const shortCommand = (name: string) => `breakrocks-news start --yes --from launches/${name}/start.yaml`;
+/** Replays the saved answers; [dir]: the launch folder (in the news home). */
+export const shortCommand = (dir: string) => `breakrocks-news start --yes --from ${shellQuote(join(dir, 'start.yaml'))}`;
 
 /** The block printed before the loop starts. */
-export function commandBlock(a: StartAnswers): string {
-  return ['', 'Run the same launch again without questions:', '', startCommand(a), '', 'or, from the saved answers:', '', shortCommand(a.name), '', `Saved in launches/${a.name}/start.sh`].join('\n');
+export function commandBlock(a: StartAnswers, dir: string): string {
+  return ['', 'Run the same launch again without questions:', '', startCommand(a), '', 'or, from the saved answers:', '', shortCommand(dir), '', `Saved in ${join(dir, 'start.sh')}`].join('\n');
 }
 
-/** Writes launches/<name>/start.sh (mode 0700) next to start.yaml. Returns its path. */
+/** Writes <launch dir>/start.sh (mode 0700) next to start.yaml. Returns its path. */
 export function writeStartScript(dir: string, a: StartAnswers): string {
   const file = join(dir, 'start.sh');
   writeFileSync(file, `#!/bin/sh\n# ${a.name}: the same launch again, without questions. Written by \`breakrocks-news start\`.\n${startCommand(a)}\n`, { mode: 0o700 });

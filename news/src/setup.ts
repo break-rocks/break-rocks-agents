@@ -1,5 +1,5 @@
 // `breakrocks-news start`: the answers of the wizard (or flags, or --from), and the files they become:
-// launches/<name>/config.yaml, sources.yaml (picked from catalogue/sources.yaml), start.yaml and .mcp.json.
+// <news home>/launches/<name>/config.yaml, sources.yaml (picked from catalogue/sources.yaml), start.yaml and .mcp.json.
 // Pure functions except writeLaunch / loadCatalogue.
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { join, resolve } from 'node:path';
@@ -32,7 +32,8 @@ export const answersSchema = z.object({
   verification: z.enum(['corroborated', 'to_confirm']).default('corroborated'),
   mode: z.enum(['dry_run', 'live']).default('dry_run'),
   runner: z.object({ kind: z.enum(RUNNERS).default('claude'), template: z.string().optional() }).prefault({}),
-  identity: z.object({ operatorId: z.string().optional(), agentId: z.string().optional(), keyFile: z.string().optional() }).prefault({}),
+  /** agent: a local agent of the breakrocks CLI (`breakrocks agents local`), env its environment; operatorId, agentId, keyFile: deprecated. */
+  identity: z.object({ agent: z.string().regex(/^[A-Za-z0-9][A-Za-z0-9._-]{0,63}$/).optional(), env: z.enum(['dev', 'staging', 'prod']).optional(), operatorId: z.string().optional(), agentId: z.string().optional(), keyFile: z.string().optional() }).prefault({}),
   breakrocks: z.string().default('breakrocks'),
 }).refine((a) => a.themes.every((t) => a.universes[t]?.length), { message: 'every theme needs at least one destination universe', path: ['universes'] })
   .refine((a) => a.runner.kind !== 'custom' || !!a.runner.template, { message: 'a custom runner needs a template', path: ['runner'] });
@@ -96,9 +97,19 @@ export function buildConfig(a: StartAnswers, sources: Source[]) {
   };
 }
 
-/** The MCP servers the runner gets: this kit and the break.rocks CLI. The agent's key stays in the environment. */
-export function mcpConfig(launchesHome: string, breakrocks: string) {
+/**
+ * The MCP servers the runner gets: this kit and the break.rocks CLI, started as the local agent
+ * (`breakrocks mcp --agent <name> --env <env>`: the CLI signs it in with the key of the system keychain).
+ * Deprecated identity (no local agent): the BREAKROCKS_* variables of the environment.
+ */
+export function mcpConfig(launchesHome: string, breakrocks: string, identity: StartAnswers['identity'] = {}) {
   const [command, ...args] = splitCommand(breakrocks);
+  if (identity.agent) {
+    return { mcpServers: {
+      'breakrocks-news': { command: process.execPath, args: [join(kitDir(), 'dist', 'index.js')], env: { BREAKROCKS_NEWS_HOME: launchesHome } },
+      breakrocks: { command: command!, args: [...args, 'mcp', '--agent', identity.agent, ...(identity.env ? ['--env', identity.env] : [])] },
+    } };
+  }
   return {
     mcpServers: {
       'breakrocks-news': { command: process.execPath, args: [join(kitDir(), 'dist', 'index.js')], env: { BREAKROCKS_NEWS_HOME: launchesHome } },
@@ -129,16 +140,16 @@ export function splitCommand(line: string): string[] {
 
 const header = (what: string) => `# ${what}, written by \`breakrocks-news start\`. Edit freely; \`start --from start.yaml\` regenerates it.\n`;
 
-/** Writes the launch folder. Returns its path. The home is the folder holding launches/. */
+/** Writes the launch folder. Returns its path. The home is the news home (the folder holding launches/). */
 export function writeLaunch(home: string, a: StartAnswers, catalogue: Source[]) {
   const dir = join(home, 'launches', a.name);
   mkdirSync(join(dir, 'drafts'), { recursive: true });
   const sources = selectSources(catalogue, a);
-  if (!sources.length) throw new Error('No catalogue source matches these themes and this scope: widen the scope or add sources to catalogue/sources.yaml');
+  if (!sources.length) throw new Error('No catalogue source matches these themes and this scope: widen the scope or add sources to the catalogue (catalogue/sources.yaml of the kit)');
   writeFileSync(join(dir, 'config.yaml'), header(`${a.name}: launch settings`) + stringify(buildConfig(a, sources), { lineWidth: 0 }));
   writeFileSync(join(dir, 'sources.yaml'), header(`${a.name}: ${sources.length} sources picked from catalogue/sources.yaml`) + stringify({ sources: sources.map(({ theme: _t, ...s }) => s) }, { lineWidth: 0 }));
   writeFileSync(join(dir, 'start.yaml'), header(`${a.name}: the answers of the wizard`) + stringify(a, { lineWidth: 0 }));
-  writeFileSync(join(dir, '.mcp.json'), `${JSON.stringify(mcpConfig(resolve(home), a.breakrocks), null, 2)}\n`);
+  writeFileSync(join(dir, '.mcp.json'), `${JSON.stringify(mcpConfig(resolve(home), a.breakrocks, a.identity), null, 2)}\n`);
   return { dir, sources };
 }
 
@@ -155,5 +166,21 @@ export function answersFromFile(file: string): Partial<StartAnswers> {
     themes: themes as Theme[], universes: Object.fromEntries(themes.map((t) => [t, u.byCategory?.[t] ?? []])), scope: agent.scope, every: agent.every,
     perHour: agent.limits.perHour, perDay: agent.limits.perDay, batch: agent.limits.batch, mode: agent.mode, runner: agent.runner, identity: agent.identity, breakrocks: agent.breakrocks,
     verification: (doc.verification as { publishUnconfirmed?: boolean })?.publishUnconfirmed ? 'to_confirm' : 'corroborated', description: doc.description as string,
+  };
+}
+
+/**
+ * The answers an example launch of the kit (examples/<name>/config.yaml) gives as a template: its themes
+ * (those of the wizard), their universes, its languages as the scope, its verification.
+ */
+export function answersFromExample(file: string): Partial<StartAnswers> {
+  const doc = parse(readFileSync(file, 'utf8')) as { themes?: string[]; languages?: string[]; description?: string; universes?: { default?: string[]; byCategory?: Record<string, string[]> }; verification?: { publishUnconfirmed?: boolean }; agent?: unknown };
+  if (doc.agent) return answersFromFile(file);
+  const themes = (doc.themes ?? []).filter((t): t is Theme => (THEMES as readonly string[]).includes(t));
+  const universes = Object.fromEntries(themes.map((t) => [t, doc.universes?.byCategory?.[t] ?? doc.universes?.default ?? []]));
+  return {
+    themes, universes, ...(doc.description ? { description: doc.description } : {}),
+    ...(doc.languages?.length ? { scope: { kind: 'languages' as const, values: doc.languages } } : {}),
+    verification: doc.verification?.publishUnconfirmed ? 'to_confirm' : 'corroborated',
   };
 }

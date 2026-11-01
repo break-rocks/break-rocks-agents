@@ -73,17 +73,18 @@ describe('the printed start command', () => {
   });
 
   it('prints the short form and the block', () => {
-    expect(shortCommand('fr-tech')).toBe('breakrocks-news start --yes --from launches/fr-tech/start.yaml');
-    const block = commandBlock(full());
+    expect(shortCommand('/h/.breakrocks/kits/news/launches/fr-tech')).toBe('breakrocks-news start --yes --from /h/.breakrocks/kits/news/launches/fr-tech/start.yaml');
+    const block = commandBlock(full(), '/h/launches/fr-tech');
     expect(block).toContain('Run the same launch again without questions:');
     expect(block).toContain(startCommand(full()));
-    expect(block).toContain('breakrocks-news start --yes --from launches/fr-tech/start.yaml');
+    expect(block).toContain('breakrocks-news start --yes --from /h/launches/fr-tech/start.yaml');
+    expect(block).toContain('Saved in /h/launches/fr-tech/start.sh');
   });
 
   it('never prints a secret: the key is a path, its content and the environment stay out', () => {
     process.env.BREAKROCKS_AGENT_KEY = BODY;
     try {
-      const out = `${commandBlock(full())}\n${startCommand(full({ mode: 'live' }))}`;
+      const out = `${commandBlock(full(), dir)}\n${startCommand(full({ mode: 'live' }))}`;
       expect(out).not.toContain(BODY);
       expect(out).not.toMatch(/PRIVATE KEY|BREAKROCKS_AGENT_KEY/);
       expect(out).toContain('--agent-key-file');
@@ -109,5 +110,14 @@ describe('the printed start command', () => {
     const d = mkdtempSync(join(tmpdir(), 'news-yaml-'));
     writeFileSync(join(d, 'start.yaml'), JSON.stringify(a));
     expect(answersSchema.parse(answersFromFile(join(d, 'start.yaml')))).toEqual(a);
+  });
+});
+
+describe('a local agent in the command', () => {
+  it('is --agent <name>, without any key', () => {
+    const a = full({ identity: { agent: 'herald', env: 'dev' } });
+    const text = startCommand(a);
+    expect(text).toContain('--agent herald');
+    expect(text).not.toMatch(/--agent-key-file|--operator-id/);
   });
 });

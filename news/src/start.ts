@@ -4,6 +4,7 @@ import { execFile } from 'node:child_process';
 import { existsSync, readFileSync } from 'node:fs';
 import { createInterface } from 'node:readline/promises';
 import { resolve } from 'node:path';
+import type { Cli, LocalAgent } from './cli.js';
 import { THEMES, answersFromFile, answersSchema, launchExists, scopeValues, splitCommand, type StartAnswers, type Theme } from './setup.js';
 
 export interface Flags { [k: string]: string | boolean | string[] | undefined }
@@ -58,8 +59,9 @@ export function answersFromFlags(f: Flags): Partial<StartAnswers> {
   if (f.live || s('mode') === 'live') a.mode = 'live';
   else if (f['dry-run'] || s('mode') === 'dry-run' || s('mode') === 'dry_run') a.mode = 'dry_run';
   if (s('runner') || s('runner-template')) a.runner = { kind: (s('runner') ?? 'custom') as StartAnswers['runner']['kind'], ...(s('runner-template') ? { template: s('runner-template') } : {}) };
-  const id = { operatorId: s('operator-id'), agentId: s('agent-id'), keyFile: s('agent-key-file') ? resolve(s('agent-key-file')!) : undefined };
-  if (id.operatorId || id.agentId || id.keyFile) a.identity = Object.fromEntries(Object.entries(id).filter(([, v]) => v)) as StartAnswers['identity'];
+  // --agent: a local agent of the breakrocks CLI; --operator-id, --agent-id, --agent-key-file: deprecated.
+  const id = { agent: s('agent'), operatorId: s('operator-id'), agentId: s('agent-id'), keyFile: s('agent-key-file') ? resolve(s('agent-key-file')!) : undefined };
+  if (id.agent || id.operatorId || id.agentId || id.keyFile) a.identity = Object.fromEntries(Object.entries(id).filter(([, v]) => v)) as StartAnswers['identity'];
   if (s('breakrocks-cmd')) a.breakrocks = s('breakrocks-cmd');
   if (s('description')) a.description = s('description');
   return a;
@@ -69,11 +71,11 @@ export function answersFromFlags(f: Flags): Partial<StartAnswers> {
 
 export interface UniverseCheck { address: string; universe: string; exists?: boolean; agentsForbidden?: boolean; myRole?: string | null; error?: string }
 
-export type ShowUniverse = (cmd: string, universe: string, env: NodeJS.ProcessEnv) => Promise<unknown>;
+export type ShowUniverse = (cmd: string, universe: string, env: NodeJS.ProcessEnv, agent?: string) => Promise<unknown>;
 
-const showWithCli: ShowUniverse = (cmd, universe, env) => new Promise((res, rej) => {
+const showWithCli: ShowUniverse = (cmd, universe, env, agent) => new Promise((res, rej) => {
   const [bin, ...pre] = splitCommand(cmd);
-  execFile(bin!, [...pre, 'universes', 'show', universe, '--json'], { env, timeout: 90_000, maxBuffer: 16 << 20 }, (err, stdout, stderr) => {
+  execFile(bin!, [...pre, 'universes', 'show', universe, '--json', ...(agent ? ['--agent', agent] : [])], { env, timeout: 90_000, maxBuffer: 16 << 20 }, (err, stdout, stderr) => {
     if (err && !stdout) return rej(new Error((stderr || err.message).trim().split('\n').at(-1)));
     try { res(JSON.parse(stdout)); } catch { rej(new Error('the CLI did not answer JSON')); }
   });
@@ -82,10 +84,10 @@ const showWithCli: ShowUniverse = (cmd, universe, env) => new Promise((res, rej)
 /** %tech#startups and %tech/sub live in %tech. */
 export const universeOf = (address: string) => address.split(/[#/]/)[0]!;
 
-export async function checkUniverse(cmd: string, address: string, env: NodeJS.ProcessEnv, show: ShowUniverse = showWithCli): Promise<UniverseCheck> {
+export async function checkUniverse(cmd: string, address: string, env: NodeJS.ProcessEnv, show: ShowUniverse = showWithCli, agent?: string): Promise<UniverseCheck> {
   const universe = universeOf(address);
   try {
-    const doc = (await show(cmd, universe, env)) as { universe?: Record<string, unknown>; error?: { code?: string; message?: string } };
+    const doc = (await show(cmd, universe, env, agent)) as { universe?: Record<string, unknown>; error?: { code?: string; message?: string } };
     if (doc.error || !doc.universe) throw new Error(doc.error ? `${doc.error.code ?? 'error'}: ${doc.error.message ?? ''}`.slice(0, 200) : 'no universe in the answer');
     const u = doc.universe ?? {};
     return {
@@ -125,7 +127,43 @@ async function askUntil<T>(io: Io, q: string, def: string | undefined, parse: (v
 const freq = (v: string) => { if (!/^\d+[mhd]$/.test(v)) throw new Error('A frequency like 15m, 1h or 1d'); if (/^\d+m$/.test(v) && Number(v.slice(0, -1)) < 5) throw new Error('At least 5m'); return v; };
 const whole = (v: string) => { const n = Number(v); if (!Number.isInteger(n) || n < 0) throw new Error('A whole number'); return n; };
 
-export interface StartContext { home: string; io?: Io; yes: boolean; skipUniverseCheck: boolean; show?: ShowUniverse; env?: NodeJS.ProcessEnv; existed: boolean }
+export interface StartContext { home: string; io?: Io; yes: boolean; skipUniverseCheck: boolean; show?: ShowUniverse; env?: NodeJS.ProcessEnv; existed: boolean; cli?: Cli }
+
+const legacy = (i: StartAnswers['identity'] | undefined) => !!(i?.operatorId || i?.agentId || i?.keyFile);
+
+/**
+ * The local agent of the launch: --agent, else asked among `breakrocks agents local` (or a new one made
+ * with `breakrocks agents create`); with --yes, the only local agent when there is one. Its environment
+ * comes with it. Deprecated identities (--operator-id…) are kept as given.
+ */
+export async function chooseAgent(given: StartAnswers['identity'] | undefined, ctx: StartContext): Promise<StartAnswers['identity']> {
+  if (legacy(given) && !given?.agent) return given!;
+  const cli = ctx.cli;
+  const print = (s: string) => (ctx.io ?? { print: (x: string) => console.log(x) }).print(s);
+  let agents: LocalAgent[] = [];
+  if (cli) { try { agents = await cli.localAgents(); } catch (e) { if (!given?.agent) throw e; print(`  ${(e as Error).message}`); } }
+  if (given?.agent) {
+    const found = agents.find((x) => x.name === given.agent);
+    if (cli && !found) throw new Error(`No local agent "${given.agent}": breakrocks agents local lists them; breakrocks agents create ${given.agent} makes one`);
+    return { agent: given.agent, ...(found ? { env: found.env } : given.env ? { env: given.env } : {}) };
+  }
+  if (ctx.yes || !ctx.io) {
+    if (agents.length === 1) { print(`Agent: ${agents[0]!.name} (${agents[0]!.env}), the only local agent.`); return { agent: agents[0]!.name, env: agents[0]!.env }; }
+    throw new Error(agents.length ? `Missing --agent: one of ${agents.map((x) => x.name).join(', ')} (breakrocks agents local)` : 'Missing --agent: no local agent yet; make one with breakrocks agents create <name> (the operator signed in), then pass --agent <name>');
+  }
+  const io = ctx.io;
+  io.print('The break.rocks delegated agent that publishes (a local agent of the breakrocks CLI; its key stays in the system keychain):');
+  agents.forEach((x, i) => io.print(`  ${i + 1}. ${x.name}  ${x.env}  ${x.agentId}`));
+  io.print(`  ${agents.length + 1}. a new one (breakrocks agents create <name>)`);
+  const pick = await askUntil(io, 'Agent', agents.length ? '1' : String(agents.length + 1), (v) => { const n = Number(v); if (!Number.isInteger(n) || n < 1 || n > agents.length + 1) throw new Error(`1 to ${agents.length + 1}`); return n; });
+  if (pick <= agents.length) return { agent: agents[pick - 1]!.name, env: agents[pick - 1]!.env };
+  const name = await askUntil(io, 'Name of the new agent (letters, digits, ".", "_", "-")', undefined, (v) => { if (!/^[A-Za-z0-9][A-Za-z0-9._-]{1,31}$/.test(v)) throw new Error('2 to 32 letters, digits, ".", "_" or "-"'); return v; });
+  if (!cli) throw new Error('No breakrocks CLI to create an agent with');
+  await cli.createAgent(name);
+  const made = (await cli.localAgents()).find((x) => x.name === name);
+  if (!made) throw new Error(`breakrocks agents create ${name} did not keep a local agent`);
+  return { agent: made.name, env: made.env };
+}
 
 /** Fills what is missing (questions, or defaults with --yes), checks the universes, confirms live. */
 export async function completeAnswers(given: Partial<StartAnswers>, ctx: StartContext): Promise<StartAnswers> {
@@ -150,6 +188,7 @@ export async function completeAnswers(given: Partial<StartAnswers>, ctx: StartCo
       return t as Theme[];
     });
   }
+  a.identity = await chooseAgent(a.identity, ctx);
   a.universes = { ...a.universes };
   const env = ctx.env ?? process.env;
   for (const theme of a.themes) {
@@ -160,7 +199,7 @@ export async function completeAnswers(given: Partial<StartAnswers>, ctx: StartCo
         });
       }
       if (ctx.skipUniverseCheck) break;
-      const checks = await Promise.all(a.universes[theme]!.map((u) => checkUniverse(a.breakrocks ?? 'breakrocks', u, env, ctx.show)));
+      const checks = await Promise.all(a.universes[theme]!.map((u) => checkUniverse(a.breakrocks ?? 'breakrocks', u, env, ctx.show, a.identity?.agent)));
       for (const c of checks) (io ?? { print: (s: string) => console.log(s) }).print(`  ${describeCheck(c)}`);
       const bad = checks.filter(blocking);
       if (!bad.length) break;
@@ -180,22 +219,15 @@ export async function completeAnswers(given: Partial<StartAnswers>, ctx: StartCo
         ? { kind, template: await askUntil(io, 'Command template ({prompt} {promptFile} {mcpConfig} {launch} {launchDir} {kitDir} {allowedTools} {codexMcp})', undefined, (v) => { if (!v.includes('{prompt')) throw new Error('It must use {prompt} or {promptFile}'); splitCommand(v); return v; }) }
         : { kind };
     }
-    if (!given.identity) {
-      io.print('The break.rocks delegated agent (BREAKROCKS_OPERATOR_ID, BREAKROCKS_AGENT_ID, BREAKROCKS_AGENT_KEY). Leave empty to use the CLI profile.');
-      const operatorId = (await io.ask('Operator id: ')).trim() || undefined;
-      const agentId = (await io.ask('Agent id: ')).trim() || undefined;
-      const keyFile = agentId ? await askUntil(io, 'Path of the agent key file (PEM; it is read at run time, never shown or copied)', undefined, (v) => checkKeyFile(v)) : undefined;
-      a.identity = { ...(operatorId ? { operatorId } : {}), ...(agentId ? { agentId } : {}), ...(keyFile ? { keyFile } : {}) };
-    }
     if (given.mode === undefined) a.mode = await askUntil(io, 'Mode: dry-run (drafts only) or live', ctx.existed ? 'live' : 'dry-run', (v) => { if (!['dry-run', 'live'].includes(v)) throw new Error('dry-run or live'); return v === 'live' ? 'live' : 'dry_run'; });
   }
   if (a.identity?.keyFile) a.identity.keyFile = checkKeyFile(a.identity.keyFile);
 
   if (a.mode === 'live') {
     if (ctx.yes || !io) {
-      if (!ctx.existed) { (io ?? { print: (s: string) => console.log(s) }).print('First start of this launch: dry run (drafts only). Check launches/<name>/drafts/, then start again with --mode live.'); a.mode = 'dry_run'; }
+      if (!ctx.existed) { (io ?? { print: (s: string) => console.log(s) }).print(`First start of this launch: dry run (drafts only). Check ${ctx.home}/launches/${a.name}/drafts/, then start again with --mode live.`); a.mode = 'dry_run'; }
     } else {
-      const ok = (await io.ask(`Go LIVE: posts are published on break.rocks${a.identity?.agentId ? ` as agent ${a.identity.agentId}` : ''}. Type "live" to confirm: `)).trim();
+      const ok = (await io.ask(`Go LIVE: posts are published on break.rocks${a.identity?.agent ? ` as the agent ${a.identity.agent}` : a.identity?.agentId ? ` as agent ${a.identity.agentId}` : ''}. Type "live" to confirm: `)).trim();
       if (ok !== 'live') { io.print('Staying in dry run.'); a.mode = 'dry_run'; }
     }
   }

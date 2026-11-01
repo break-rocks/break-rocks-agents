@@ -1,6 +1,6 @@
 {
   "name": "@break-rocks/news-agent",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "News agent kit for break.rocks: a local MCP server (breakrocks-news) that collects, groups and tracks news events; your own AI writes and publishes through `breakrocks mcp`.",
   "license": "Apache-2.0",
   "private": true,
