@@ -4,6 +4,7 @@ import { join } from 'node:path';
 import { lexicalSimilarity, matches, type Candidate, type Signature, type Similarity } from './cluster.js';
 import { conditionalGet, isGdeltRateLimit, itemsOf, requestUrl, type Fetcher } from './collect/fetchers.js';
 import { frequencyMs } from './config.js';
+import { hybrid, ollamaDecider, type Decider } from './decider.js';
 import { similarityFor, type Embedder } from './embed.js';
 import { normalizeItem } from './normalize.js';
 import { isSensitive, readiness, verificationOf } from './status.js';
@@ -12,7 +13,7 @@ import type { Article, Launch, NewsEvent, PublicationStatus, Source } from './ty
 
 export const openStore = (launch: Launch) => new Store(join(launch.dir, 'data'));
 
-export interface CollectOptions { force?: boolean; now?: Date; fetcher?: Fetcher; similarity?: Similarity; embedder?: Embedder; onlySources?: string[]; sleep?: (ms: number) => Promise<void> }
+export interface CollectOptions { force?: boolean; now?: Date; fetcher?: Fetcher; similarity?: Similarity; embedder?: Embedder; onlySources?: string[]; sleep?: (ms: number) => Promise<void>; decider?: Decider }
 
 export interface SourceReport {
   id: string; status: 'fetched' | 'cached' | 'not_modified' | 'not_due' | 'backoff' | 'disabled' | 'error';
@@ -56,8 +57,11 @@ interface Live extends Candidate { published: boolean; firstSeen: string }
  * events, both at or above clustering.mergeThreshold, bridges them: they are merged (the published one,
  * else the older one, keeps its id; the other id becomes an alias). Two published events are never merged.
  * With an embedding similarity, the vectors are read from the store (collect embeds before ingesting).
+ * With a decider (decider.merges), each bridge is asked "same event?": a sure no rejects a proposed merge,
+ * a sure yes merges an event that matched above the threshold but below mergeThreshold. The plan is made
+ * first (asking the model), the store is written after, in one transaction.
  */
-export function ingest(store: Store, launch: Launch, articles: Article[], similarity: Similarity = lexicalSimilarity, now = new Date()): { added: number; newEvents: number; touched: Set<string>; merged: { into: string; from: string }[] } {
+export async function ingest(store: Store, launch: Launch, articles: Article[], similarity: Similarity = lexicalSimilarity, now = new Date(), decider?: Decider): Promise<{ added: number; newEvents: number; touched: Set<string>; merged: { into: string; from: string }[]; decided?: { asked: number; rejected: number; added: number } }> {
   const { threshold, windowHours, mergeThreshold } = launch.config.clustering;
   const fresh = articles.filter((a, i) => !store.hasArticle(a.id) && articles.findIndex((b) => b.id === a.id) === i)
     .sort((a, b) => a.publishedAt.localeCompare(b.publishedAt));
@@ -66,37 +70,58 @@ export function ingest(store: Store, launch: Launch, articles: Article[], simila
   const since = new Date(Date.parse(fresh[0]!.publishedAt) - windowHours * H).toISOString();
   const recent = store.recentEvents(since).filter(({ event }) => event.status !== 'skipped');
   const vectors = model ? store.vectorsOf([...fresh.map((a) => a.id), ...recent.flatMap((r) => r.members.map((m) => m.id))], model) : new Map<string, Float32Array>();
-  const sigOf = (a: Article): Signature => ({ tokens: a.tokens, entities: a.entities, at: a.publishedAt, ...(vectors.has(a.id) ? { vector: vectors.get(a.id)! } : {}) });
+  const sigOf = (a: Article): Signature => ({ title: a.title, tokens: a.tokens, entities: a.entities, at: a.publishedAt, ...(vectors.has(a.id) ? { vector: vectors.get(a.id)! } : {}) });
   const live = new Map<string, Live>();
   for (const { event, members } of recent) live.set(event.id, { eventId: event.id, members: members.map(sigOf), published: !!event.published, firstSeen: event.firstSeen });
   const touched = new Set<string>();
   const merged: { into: string; from: string }[] = [];
   let newEvents = 0;
-  store.tx(() => {
-    for (const a of fresh) {
-      const sig = sigOf(a);
-      const hits = a.tokens.length || sig.vector ? matches(sig, [...live.values()], { threshold, windowHours, similarity }) : [];
-      let eventId = hits[0]?.eventId ?? Store.eventIdFor(a.id);
-      if (!hits.length) { newEvents++; live.set(eventId, { eventId, members: [], published: false, firstSeen: a.collectedAt }); }
-      // Bridges: every other event this article also matches strongly.
-      if (hits[0] && hits[0].score >= mergeThreshold) {
-        for (const h of hits.slice(1)) {
-          if (h.score < mergeThreshold) break;
-          const x = live.get(eventId)!, y = live.get(h.eventId);
-          if (!y || (x.published && y.published)) continue;
-          const [into, from] = y.published || (!x.published && y.firstSeen < x.firstSeen) ? [y, x] : [x, y];
-          into.members.push(...from.members);
-          live.delete(from.eventId);
-          merged.push({ into: into.eventId, from: from.eventId });
-          touched.delete(from.eventId);
-          touched.add(into.eventId);
-          eventId = into.eventId;
+  const cfg = launch.config.decider;
+  const ask = decider && cfg?.merges ? decider : undefined;
+  const decided = { asked: 0, rejected: 0, added: 0 };
+  const titleOf = (sig: Signature, c: Live) => {
+    let best = -1, title = '';
+    for (const m of c.members) { const x = similarity.score(sig, m); if (x > best && m.title) { best = x; title = m.title; } }
+    return title;
+  };
+  const placed: [Article, string][] = [];
+  for (const a of fresh) {
+    const sig = sigOf(a);
+    const hits = a.tokens.length || sig.vector ? matches(sig, [...live.values()], { threshold, windowHours, similarity }) : [];
+    let eventId = hits[0]?.eventId ?? Store.eventIdFor(a.id);
+    if (!hits.length) { newEvents++; live.set(eventId, { eventId, members: [], published: false, firstSeen: a.collectedAt }); }
+    // Bridges: every other event this article also matches strongly (or, with a decider, matches at all).
+    if (hits[0] && (hits[0].score >= mergeThreshold || ask)) {
+      for (const h of hits.slice(1)) {
+        if (h.score < mergeThreshold && !ask) break;
+        const x = live.get(eventId)!, y = live.get(h.eventId);
+        if (!y || (x.published && y.published)) continue;
+        let merge = h.score >= mergeThreshold && hits[0].score >= mergeThreshold;
+        if (ask) {
+          const other = titleOf(sig, y);
+          const p = other ? await ask.sameEvent(a.title, other) : undefined;
+          if (p !== undefined) decided.asked++;
+          const verdict = hybrid(merge, p, cfg!);
+          if (merge && !verdict) decided.rejected++;
+          if (!merge && verdict) decided.added++;
+          merge = verdict;
         }
+        if (!merge) continue;
+        const [into, from] = y.published || (!x.published && y.firstSeen < x.firstSeen) ? [y, x] : [x, y];
+        into.members.push(...from.members);
+        live.delete(from.eventId);
+        merged.push({ into: into.eventId, from: from.eventId });
+        touched.delete(from.eventId);
+        touched.add(into.eventId);
+        eventId = into.eventId;
       }
-      live.get(eventId)!.members.unshift(sig);
-      store.insertArticle(a, eventId);
-      touched.add(eventId);
     }
+    live.get(eventId)!.members.unshift(sig);
+    placed.push([a, eventId]);
+    touched.add(eventId);
+  }
+  store.tx(() => {
+    for (const [a, eventId] of placed) store.insertArticle(a, eventId);
     const at = now.toISOString();
     for (const { into, from } of merged) {
       const i = store.resolve(into), f = store.resolve(from);
@@ -111,7 +136,7 @@ export function ingest(store: Store, launch: Launch, articles: Article[], simila
     }
   });
   for (const id of touched) store.writeEventFile(id);
-  return { added: fresh.length, newEvents, touched, merged };
+  return { added: fresh.length, newEvents, touched, merged, ...(ask ? { decided } : {}) };
 }
 
 /** Embeds the titles of [articles] not yet embedded with [embedder]'s model, and stores the vectors. */
@@ -240,7 +265,23 @@ export async function collect(launch: Launch, opts: CollectOptions = {}) {
         similarity = lexicalSimilarity;
       }
     }
-    const { added, newEvents, touched, merged } = ingest(store, launch, all, similarity, now);
+    // The decider (off by default): built once per collect; it warns once and steps aside if unavailable.
+    const dcfg = launch.config.decider;
+    const decider = dcfg?.enabled ? opts.decider ?? ollamaDecider(dcfg) : undefined;
+    let promoDecided: { asked: number; flipped: number } | undefined;
+    if (decider && dcfg!.promo) {
+      promoDecided = { asked: 0, flipped: 0 };
+      for (const a of all.filter((x, i) => !store.hasArticle(x.id) && all.findIndex((y) => y.id === x.id) === i)) {
+        const p = await decider.promotional(a.title, a.url);
+        if (p === undefined) break;
+        promoDecided.asked++;
+        const v = hybrid(!!a.promo, p, dcfg!);
+        if (v !== !!a.promo) promoDecided.flipped++;
+        if (v) a.promo = true; else delete a.promo;
+      }
+      for (const a of all) { const first = all.find((y) => y.id === a.id)!; if (first !== a) { if (first.promo) a.promo = true; else delete a.promo; } }
+    }
+    const { added, newEvents, touched, merged, decided } = await ingest(store, launch, all, similarity, now, decider);
     const lastPurge = store.meta('last_purge');
     const purged = !lastPurge || Date.parse(lastPurge) + DAY <= nowMs ? purgeLaunch(launch, store, now) : undefined;
     const fetched = reports.filter((r) => r.status === 'fetched' || r.status === 'cached').length;
@@ -253,6 +294,7 @@ export async function collect(launch: Launch, opts: CollectOptions = {}) {
       },
       articles: { seen: all.length, added, promo: all.filter((a) => a.promo).length }, events: { created: newEvents, touched: touched.size, merged },
       ...(embedding ? { embedding } : {}),
+      ...(decider ? { decider: { model: decider.model, merges: decided, promo: promoDecided } } : {}),
       ...(purged ? { purged } : {}),
       totals: store.counts(),
       pending: pendingEvents(launch, 1000, store).length,

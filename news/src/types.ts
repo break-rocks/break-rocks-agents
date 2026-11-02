@@ -42,6 +42,8 @@ export interface LaunchConfig {
   clustering: ClusteringSettings;
   /** Promotions and deals: marked `promo` and kept out of pending_events unless keepPromo. */
   filters?: { keepPromo: boolean; promoCategories: string[] };
+  /** Optional decision model (Strands Decider via Ollama): confirms merges and promo verdicts when sure. */
+  decider?: DeciderSettings;
   /** Purge of old data (run at most once a day by collect, or `breakrocks-news purge`). */
   retention?: { articlesDays: number; eventsDays: number; logsDays: number };
   /** Per-source politeness: backoff after 429, GDELT cadence and automatic disabling. */
@@ -76,6 +78,21 @@ export interface ClusteringSettings {
   /** A new article scoring at least this against two open events merges them. */
   mergeThreshold: number;
   embedding?: EmbeddingSettings;
+}
+
+export interface DeciderSettings {
+  /** Off by default. */
+  enabled: boolean;
+  /** Ollama base URL; the endpoint is <url>/v1/systemone. */
+  url: string;
+  model: string;
+  /** The model acts only when p >= high (yes) or p <= low (no); in between the current answer stands. */
+  high: number;
+  low: number;
+  /** Ask about merges proposed by the clustering, and about the promo verdict of each new article. */
+  merges: boolean;
+  promo: boolean;
+  timeoutMs: number;
 }
 
 export interface AgentSettings {

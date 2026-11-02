@@ -6,18 +6,18 @@ import { Store } from '../src/store.js';
 import { art, source, tmpLaunch } from './helpers.js';
 
 describe('store and event life cycle', () => {
-  it('groups articles into events with stable ids, persists SQLite and events/<id>.json', () => {
+  it('groups articles into events with stable ids, persists SQLite and events/<id>.json', async () => {
     const launch = tmpLaunch();
     const store = openStore(launch);
     const a1 = art('La BCE relève ses taux directeurs de 25 points', 'https://lemonde.fr/a?utm_source=x', { id: 'lemonde', name: 'Le Monde' });
-    const r1 = ingest(store, launch, [a1, art('Apple présente un iPhone pliable', 'https://lemonde.fr/b', { id: 'lemonde', name: 'Le Monde', category: 'tech' })]);
+    const r1 = await ingest(store, launch, [a1, art('Apple présente un iPhone pliable', 'https://lemonde.fr/b', { id: 'lemonde', name: 'Le Monde', category: 'tech' })]);
     expect(r1).toMatchObject({ added: 2, newEvents: 2 });
     const id = Store.eventIdFor(a1.id);
     expect(store.getEvent(id)?.verification).toBe('to_confirm');
     expect(a1.url).toBe('https://lemonde.fr/a');
 
     // The same story from another outlet joins the event; the id does not change; duplicates are ignored.
-    const r2 = ingest(store, launch, [a1, art('BCE : les taux directeurs relevés de 25 points', 'https://lesechos.fr/c', { id: 'echos', name: 'Les Echos' }, '2026-11-01T10:00:00Z')]);
+    const r2 = await ingest(store, launch, [a1, art('BCE : les taux directeurs relevés de 25 points', 'https://lesechos.fr/c', { id: 'echos', name: 'Les Echos' }, '2026-11-01T10:00:00Z')]);
     expect(r2).toMatchObject({ added: 1, newEvents: 0 });
     const e = store.getEvent(id)!;
     expect(e).toMatchObject({ verification: 'corroborated', articleCount: 2, outlets: ['Le Monde', 'Les Echos'] });
@@ -30,18 +30,18 @@ describe('store and event life cycle', () => {
     expect(pending.find((p) => p.category === 'tech')?.universes).toEqual(['%tech']);
   });
 
-  it('records publications, then asks for an update when new sources arrive; keeps the history', () => {
+  it('records publications, then asks for an update when new sources arrive; keeps the history', async () => {
     const launch = tmpLaunch();
     const store = openStore(launch);
     const a1 = art('Eurostat : inflation de la zone euro à 2,1 % en octobre', 'https://lemonde.fr/i', { id: 'lemonde', name: 'Le Monde' });
-    ingest(store, launch, [a1]);
+    await ingest(store, launch, [a1]);
     store.close();
     const id = Store.eventIdFor(a1.id);
     recordPublication(launch, { eventId: id, postId: 'post-1', summaryVersion: 1, text: 'v1', status: 'published' });
     expect(pendingEvents(launch)).toHaveLength(0);
 
     const s2 = openStore(launch);
-    ingest(s2, launch, [art('Inflation zone euro : 2,1 % en octobre selon Eurostat', 'https://lefigaro.fr/i', { id: 'figaro', name: 'Le Figaro' }, '2026-11-01T11:00:00Z')]);
+    await ingest(s2, launch, [art('Inflation zone euro : 2,1 % en octobre selon Eurostat', 'https://lefigaro.fr/i', { id: 'figaro', name: 'Le Figaro' }, '2026-11-01T11:00:00Z')]);
     s2.close();
     const [p] = pendingEvents(launch);
     expect(p).toMatchObject({ id, kind: 'update', verification: 'corroborated' });
@@ -53,12 +53,12 @@ describe('store and event life cycle', () => {
     expect(pendingEvents(launch)).toHaveLength(0);
   });
 
-  it('a crime event waits for corroboration; mark_event removes it from pending', () => {
+  it('a crime event waits for corroboration; mark_event removes it from pending', async () => {
     const launch = tmpLaunch();
     const store = openStore(launch);
     const a = art('Un suspect interpellé après le braquage à Lyon', 'https://x.fr/1', { id: 'x', name: 'X' });
     const b = art('Grève des contrôleurs aériens ce week-end', 'https://x.fr/2', { id: 'x', name: 'X' });
-    ingest(store, launch, [a, b]);
+    await ingest(store, launch, [a, b]);
     store.close();
     expect(eventDetail(launch, Store.eventIdFor(a.id)).event).toMatchObject({ category: 'crime_justice', sensitive: true });
     expect(pendingEvents(launch).map((p) => p.id)).toEqual([Store.eventIdFor(b.id)]);

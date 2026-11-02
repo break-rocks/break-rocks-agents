@@ -35,6 +35,8 @@ export const answersSchema = z.object({
   /** agent: a local agent of the breakrocks CLI (`breakrocks agents local`), env its environment; operatorId, agentId, keyFile: deprecated. */
   identity: z.object({ agent: z.string().regex(/^[A-Za-z0-9][A-Za-z0-9._-]{0,63}$/).optional(), env: z.enum(['dev', 'staging', 'prod']).optional(), operatorId: z.string().optional(), agentId: z.string().optional(), keyFile: z.string().optional() }).prefault({}),
   breakrocks: z.string().default('breakrocks'),
+  /** The optional decision model (Strands Decider via a local Ollama) beside the merges and the promo filter. */
+  decider: z.boolean().default(false),
 }).refine((a) => a.themes.every((t) => a.universes[t]?.length), { message: 'every theme needs at least one destination universe', path: ['universes'] })
   .refine((a) => a.runner.kind !== 'custom' || !!a.runner.template, { message: 'a custom runner needs a template', path: ['runner'] });
 
@@ -93,6 +95,7 @@ export function buildConfig(a: StartAnswers, sources: Source[]) {
     clustering: { backend: 'lexical', threshold: 0.34, windowHours: 48, mergeThreshold: 0.5 },
     collect: { maxAgeHours: 48, concurrency: 6 },
     schedule: cronOf(a.every),
+    ...(a.decider ? { decider: { enabled: true, url: 'http://127.0.0.1:11434', model: 'strands-decider', high: 0.8, low: 0.2 } } : {}),
     agent,
   };
 }
@@ -166,6 +169,7 @@ export function answersFromFile(file: string): Partial<StartAnswers> {
     themes: themes as Theme[], universes: Object.fromEntries(themes.map((t) => [t, u.byCategory?.[t] ?? []])), scope: agent.scope, every: agent.every,
     perHour: agent.limits.perHour, perDay: agent.limits.perDay, batch: agent.limits.batch, mode: agent.mode, runner: agent.runner, identity: agent.identity, breakrocks: agent.breakrocks,
     verification: (doc.verification as { publishUnconfirmed?: boolean })?.publishUnconfirmed ? 'to_confirm' : 'corroborated', description: doc.description as string,
+    decider: !!(doc.decider as { enabled?: boolean } | undefined)?.enabled,
   };
 }
 

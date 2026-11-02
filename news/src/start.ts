@@ -9,7 +9,7 @@ import { THEMES, answersFromFile, answersSchema, launchExists, scopeValues, spli
 
 export interface Flags { [k: string]: string | boolean | string[] | undefined }
 
-const BOOLEAN = new Set(['yes', 'no-run', 'once', 'live', 'dry-run', 'skip-universe-check', 'json', 'print', 'force', 'help']);
+const BOOLEAN = new Set(['yes', 'no-run', 'once', 'live', 'dry-run', 'skip-universe-check', 'json', 'print', 'force', 'help', 'decider', 'no-decider']);
 const REPEAT = new Set(['universe']);
 
 /** --key value | --key=value | --flag; repeatable --universe. Positionals in _. */
@@ -64,6 +64,8 @@ export function answersFromFlags(f: Flags): Partial<StartAnswers> {
   if (id.agent || id.operatorId || id.agentId || id.keyFile) a.identity = Object.fromEntries(Object.entries(id).filter(([, v]) => v)) as StartAnswers['identity'];
   if (s('breakrocks-cmd')) a.breakrocks = s('breakrocks-cmd');
   if (s('description')) a.description = s('description');
+  if (f.decider) a.decider = true;
+  else if (f['no-decider']) a.decider = false;
   return a;
 }
 
@@ -219,6 +221,7 @@ export async function completeAnswers(given: Partial<StartAnswers>, ctx: StartCo
         ? { kind, template: await askUntil(io, 'Command template ({prompt} {promptFile} {mcpConfig} {launch} {launchDir} {kitDir} {allowedTools} {codexMcp})', undefined, (v) => { if (!v.includes('{prompt')) throw new Error('It must use {prompt} or {promptFile}'); splitCommand(v); return v; }) }
         : { kind };
     }
+    if (given.decider === undefined) a.decider = await askUntil(io, 'Decision model: let a local Strands Decider (Ollama, `ollama pull strands-decider`, Apple silicon) confirm merges and the promo filter? y or n', 'n', (v) => { if (!/^[yn]/i.test(v)) throw new Error('y or n'); return /^y/i.test(v); });
     if (given.mode === undefined) a.mode = await askUntil(io, 'Mode: dry-run (drafts only) or live', ctx.existed ? 'live' : 'dry-run', (v) => { if (!['dry-run', 'live'].includes(v)) throw new Error('dry-run or live'); return v === 'live' ? 'live' : 'dry_run'; });
   }
   if (a.identity?.keyFile) a.identity.keyFile = checkKeyFile(a.identity.keyFile);

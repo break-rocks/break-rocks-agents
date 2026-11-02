@@ -40,7 +40,7 @@ async function ingestWith(store: Store, launch: ReturnType<typeof tmpLaunch>, em
 }
 
 describe('semantic similarity (embedding backend)', () => {
-  it('cosine and the hybrid score: paraphrases high, unrelated low, lexical fallback without vectors', () => {
+  it('cosine and the hybrid score: paraphrases high, unrelated low, lexical fallback without vectors', async () => {
     expect(cosine(Float32Array.from([1, 0]), Float32Array.from([1, 0]))).toBeCloseTo(1);
     const sim = embeddingSimilarity('m');
     const at = '2026-11-01T08:00:00Z';
@@ -103,7 +103,7 @@ describe('semantic similarity (embedding backend)', () => {
     expect((await local.embed(['a', 'b'])).length).toBe(2);
   });
 
-  it('the default stays lexical, with nothing to load', () => {
+  it('the default stays lexical, with nothing to load', async () => {
     expect(similarityFor(tmpLaunch().config)).toEqual({ similarity: lexicalSimilarity });
   });
 });
@@ -169,7 +169,7 @@ describe('event merging', () => {
 });
 
 describe('promotion filter', () => {
-  it('recognises deals in several languages, prices with discounts, affiliate links and deal categories', () => {
+  it('recognises deals in several languages, prices with discounts, affiliate links and deal categories', async () => {
     const yes = [
       ['Bon plan : le Galaxy S26 à 699 € au lieu de 899 €', 'https://x.fr/a'],
       ['Black Friday deal: AirPods Pro 3 for $179 ($70 off)', 'https://x.com/a'],
@@ -193,25 +193,25 @@ describe('promotion filter', () => {
     for (const [t, u] of no) expect(promoVerdict(t!, u!).promo, t).toBe(false);
   });
 
-  it('marks promo articles and events, keeps them out of pending unless keepPromo', () => {
-    const run = (keepPromo: boolean) => {
+  it('marks promo articles and events, keeps them out of pending unless keepPromo', async () => {
+    const run = async (keepPromo: boolean) => {
       const launch = tmpLaunch({ filters: { keepPromo, promoCategories: ['deals'] } });
       const store = openStore(launch);
       const deal = art('Bon plan : la PS5 Pro à 599 € au lieu de 799 €', 'https://x.fr/deal', { id: 'x', name: 'X' });
       expect(deal.promo).toBe(true);
-      ingest(store, launch, [deal, art('Sony annonce la PS6 pour 2027', 'https://y.fr/news', { id: 'y', name: 'Y' })]);
+      await ingest(store, launch, [deal, art('Sony annonce la PS6 pour 2027', 'https://y.fr/news', { id: 'y', name: 'Y' })]);
       expect(store.getEvent(Store.eventIdFor(deal.id))?.promo).toBe(true);
       const p = pendingEvents(launch, 20, store);
       store.close();
       return p;
     };
-    expect(run(false).map((e) => e.title)).toEqual(['Sony annonce la PS6 pour 2027']);
-    expect(run(true)).toHaveLength(2);
+    expect((await run(false)).map((e) => e.title)).toEqual(['Sony annonce la PS6 pour 2027']);
+    expect(await run(true)).toHaveLength(2);
   });
 });
 
 describe('retention', () => {
-  it('purges old unpublished events, old published events after eventsDays, old logs, then vacuums', () => {
+  it('purges old unpublished events, old published events after eventsDays, old logs, then vacuums', async () => {
     const launch = tmpLaunch({ retention: { articlesDays: 30, eventsDays: 180, logsDays: 30 } });
     const store = openStore(launch);
     const mk = (title: string, url: string, at: string) => ({ ...art(title, url, { id: url.slice(8, 9), name: url.slice(8, 9) }, at), collectedAt: at });
@@ -219,7 +219,7 @@ describe('retention', () => {
     const oldPub = mk('Histoire publiée en septembre', 'https://b.fr/2', '2026-09-01T08:00:00Z');
     const ancientPub = mk('Histoire publiée il y a un an', 'https://c.fr/3', '2025-10-01T08:00:00Z');
     const fresh = mk('Histoire du jour', 'https://d.fr/4', '2026-10-31T08:00:00Z');
-    ingest(store, launch, [oldOpen, oldPub, ancientPub, fresh]);
+    await ingest(store, launch, [oldOpen, oldPub, ancientPub, fresh]);
     store.close();
     for (const a of [oldPub, ancientPub]) recordPublication(launch, { eventId: Store.eventIdFor(a.id), postId: a.id, summaryVersion: 1, text: 't', status: 'published' });
     mkdirSync(join(launch.dir, 'data', 'logs'), { recursive: true });
@@ -243,7 +243,7 @@ describe('GDELT politeness', () => {
   const ok = JSON.stringify({ articles: [{ url: 'https://n.fr/1', title: 'Sommet du G20 à Rio', seendate: '20261101T080000Z', domain: 'n.fr', language: 'French' }] });
   const at = (iso: string) => new Date(iso);
 
-  it('Retry-After and exponential backoff', () => {
+  it('Retry-After and exponential backoff', async () => {
     expect(retryAfterMs('120', 0)).toBe(120_000);
     expect(retryAfterMs('Sun, 01 Nov 2026 10:00:00 GMT', Date.parse('2026-11-01T09:59:00Z'))).toBe(60_000);
     expect([1, 2, 3].map((n) => backoffMs(n))).toEqual([300_000, 600_000, 1_200_000]);
@@ -296,17 +296,17 @@ describe('GDELT politeness', () => {
 
 describe('server-side caps and dedup in pending_events', () => {
   const agent: AgentSettings = { mode: 'dry_run', every: '1h', scope: { kind: 'world', values: [] }, limits: { perHour: 2, perDay: 3, batch: 5 }, runner: { kind: 'claude', timeoutMinutes: 30 }, identity: {}, breakrocks: 'breakrocks' };
-  const seeded = () => {
+  const seeded = async () => {
     const launch = tmpLaunch({ agent });
     const store = openStore(launch);
     const titles = ['Sommet européen sur le climat', 'Apple rachète une startup', 'Grève à la SNCF', 'Nouveau record au Louvre', 'La NASA lance Artemis'];
-    ingest(store, launch, titles.map((t, i) => art(t, `https://s${i}.fr/${i}`, { id: `s${i}`, name: `S${i}` })));
+    await ingest(store, launch, titles.map((t, i) => art(t, `https://s${i}.fr/${i}`, { id: `s${i}`, name: `S${i}` })));
     store.close();
     return launch;
   };
 
-  it('hands out no more than the caps leave, counting what was handed out even when never recorded', () => {
-    const launch = seeded();
+  it('hands out no more than the caps leave, counting what was handed out even when never recorded', async () => {
+    const launch = await seeded();
     const t0 = new Date('2026-11-01T10:00:00Z');
     const r1 = pendingForAi(launch, 20, t0);
     expect(r1.events).toHaveLength(2);
@@ -322,8 +322,8 @@ describe('server-side caps and dedup in pending_events', () => {
     expect(pendingForAi(launch, 20, new Date('2026-11-01T12:30:00Z')).events).toEqual([]);
   });
 
-  it('recording a handed-out event does not count it twice; skipping gives the hand-out back', () => {
-    const launch = seeded();
+  it('recording a handed-out event does not count it twice; skipping gives the hand-out back', async () => {
+    const launch = await seeded();
     const t0 = new Date('2026-11-01T10:00:00Z');
     const [a, b] = pendingForAi(launch, 20, t0).events;
     const store = openStore(launch);
@@ -337,8 +337,8 @@ describe('server-side caps and dedup in pending_events', () => {
     expect(r.caps).toMatchObject({ usedHour: 2, usedDay: 2 });
   });
 
-  it('without an agent block, no caps; the CLI pending never hands out', () => {
-    const launch = seeded();
+  it('without an agent block, no caps; the CLI pending never hands out', async () => {
+    const launch = await seeded();
     launch.config.agent = undefined;
     expect(pendingForAi(launch, 20).events).toHaveLength(5);
     expect(pendingForAi(launch, 20).caps).toBeNull();
@@ -347,7 +347,7 @@ describe('server-side caps and dedup in pending_events', () => {
 });
 
 describe('store migration', () => {
-  it('opens a 0.2.0 news.db and adds the new columns in place', () => {
+  it('opens a 0.2.0 news.db and adds the new columns in place', async () => {
     const launch = tmpLaunch();
     mkdirSync(join(launch.dir, 'data'), { recursive: true });
     const db = new DatabaseSync(join(launch.dir, 'data', 'news.db'));
@@ -362,7 +362,7 @@ describe('store migration', () => {
     db.close();
     const store = openStore(launch);
     expect(store.sourceState('s')).toMatchObject({ lastCount: 3, consecutive429: undefined });
-    ingest(store, launch, [art('Un titre', 'https://a.fr/1')]);
+    await ingest(store, launch, [art('Un titre', 'https://a.fr/1')]);
     expect(store.counts().events).toBe(1);
     store.close();
   });

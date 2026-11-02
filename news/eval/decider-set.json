@@ -1,0 +1,837 @@
+{
+ "note": "Self-labelled by the kit author (AI-assisted) from the fr-tech launch data of 2026-10-30 to 2026-11-01: not an independent ground truth. same = the same specific news happening; promo = a deal, advertorial or shopping recommendation.",
+ "pairs": [
+  {
+   "a": "The Elder Scrolls VI : tout ce que l’on sait à ce jour (infos, annonces, date de sortie, personnages…)",
+   "b": "The Elder Scrolls VI : tout ce que l’on sait à ce jour (infos, annonces, date de sortie, personnages…)",
+   "same": true
+  },
+  {
+   "a": "Life is Strange : date de sortie, casting, intrigue… tout savoir sur la série LIVE Action d’Amazon Prime",
+   "b": "Life is Strange : date de sortie, casting, intrigue… tout savoir sur la série LIVE Action d’Amazon Prime",
+   "same": true
+  },
+  {
+   "a": "\"Pas de chauffage avant décembre !\" : le défi des internautes pour réaliser des économies",
+   "b": "\"Pas de chauffage avant décembre !\" : Le défi des internautes pour réaliser des économies",
+   "same": true
+  },
+  {
+   "a": "Test TCL 85X11L : un des meilleurs Mini-Led du marché qui offre une claque en HDR",
+   "b": "Test TCL 98X11L : un des meilleurs Mini-Led du marché qui offre une claque en HDR",
+   "same": false
+  },
+  {
+   "a": "Piratage de la plateforme de cryptomonnaies Binance : le FBI accuse la Corée du Nord",
+   "b": "Piratage de la plateforme de cryptomonnaies Binance : la plateforme annonce rouvrir les retraits, le FBI accuse la Corée du Nord du « casse du siècle »",
+   "same": true
+  },
+  {
+   "a": "Actualité : Cette montre connectée présente le meilleur rapport qualité / prix de notre comparatif",
+   "b": "Actualité : Ce smartphone présente le meilleur rapport qualité / prix de notre comparatif",
+   "same": false
+  },
+  {
+   "a": "Actualité : Ce smartphone présente le meilleur rapport qualité / prix de notre comparatif",
+   "b": "Actualité : Ce nettoyeur de sol présente le meilleur rapport qualité / prix de notre comparatif",
+   "same": false
+  },
+  {
+   "a": "Des milliers de Français remplacent leur Livret A par ce compte IG : vu les avantages, on comprend pourquoi",
+   "b": "Complément Livret A : pourquoi des milliers de Français se tournent vers ce compte courant rémunéré ?",
+   "same": false
+  },
+  {
+   "a": "À la TV ce soir : 3 films à regarder ce dimanche",
+   "b": "À la TV ce soir : 3 films à regarder ce dimanche 1er novembre 2026",
+   "same": true
+  },
+  {
+   "a": "Piratage de la plateforme de cryptomonnaies Binance : le FBI accuse la Corée du Nord",
+   "b": "Le FBI accuse un pays du piratage de 6,3 milliards de dollars sur Binance : une liste d’adresses vient d’être publiée",
+   "same": true
+  },
+  {
+   "a": "Des milliers de Français ont dit adieu au Livret A pour le remplacer par ce livret d'épargne à 3,5 %",
+   "b": "Ils ont presque dit au revoir au Livret A : voici un placement que des tonnes de Français adorent depuis octobre 2026",
+   "same": false
+  },
+  {
+   "a": "Des milliers de Français remplacent leur Livret A par ce compte IG : vu les avantages, on comprend pourquoi",
+   "b": "Des milliers de Français ont dit adieu au Livret A pour le remplacer par ce livret d'épargne à 3,5 %",
+   "same": true
+  },
+  {
+   "a": "Sam Altman est très déçu par la nouvelle génération : ils s’intéressent aux tendances du passé au lieu d’utiliser l’IA",
+   "b": "Sam Altman déplore que la RAM soit sous-utilisée sur des PC au lieu d’équiper les centres de données pour l’IA",
+   "same": false
+  },
+  {
+   "a": "Le FBI accuse un pays du piratage de 6,3 milliards de dollars sur Binance : une liste d’adresses vient d’être publiée",
+   "b": "Piratage de la plateforme de cryptomonnaies Binance : la plateforme annonce rouvrir les retraits, le FBI accuse la Corée du Nord du « casse du siècle »",
+   "same": false
+  },
+  {
+   "a": "Top bon plan : Samsung, Dyson, Bose... les meilleurs bons plans du 31/10/2026",
+   "b": "Top bon plan : Samsung, Dyson, Bose... les meilleurs bons plans du 01/11/2026",
+   "same": true
+  },
+  {
+   "a": "GTA 6 : véhicules, map, date de sortie, précommande, tout savoir sur le prochain jeu Rockstar Games",
+   "b": "GTA 6 : un monde ouvert qui fait mieux que les anciens jeux de Rockstar Games",
+   "same": false
+  },
+  {
+   "a": "\"Je m'inquiète de ce que les producteurs vont faire de mon image\" : en Chine, les acteurs sont de plus en plus remplacés par des IA",
+   "b": "En Chine, le premier film entièrement généré par IA est un flop",
+   "same": false
+  },
+  {
+   "a": "500 milliards de dollars envolés : le mode IA de Google se retourne contre lui",
+   "b": "L'IA de Google donne accès à des centaines de manuels gratuits et aide même à réviser",
+   "same": true
+  },
+  {
+   "a": "500 milliards de dollars envolés : le mode IA de Google se retourne contre lui",
+   "b": "Un satellite, une IA et un poème, Google vient de réussir une expérience assez folle dans l'espace",
+   "same": false
+  },
+  {
+   "a": "Google Cloud décolle, mais l’intégration de l’IA générative dans la recherche fait vaciller le modèle économique de Google",
+   "b": "Un satellite, une IA et un poème, Google vient de réussir une expérience assez folle dans l'espace",
+   "same": false
+  },
+  {
+   "a": "Actualité : Voici la meilleure carte mémoire à prix abordable de notre comparatif",
+   "b": "Actualité : Voici la meilleure perceuse visseuse à prix abordable de notre comparatif",
+   "same": false
+  },
+  {
+   "a": "Le premier film généré à 100% par IA fait un flop",
+   "b": "En Chine, le premier film entièrement généré par IA est un flop",
+   "same": true
+  },
+  {
+   "a": "Pour Sam Altman, la RAM de votre PC devrait plutôt aller dans les data centers",
+   "b": "Sam Altman déplore que la RAM soit sous-utilisée sur des PC au lieu d’équiper les centres de données pour l’IA",
+   "same": true
+  },
+  {
+   "a": "Après la GeForce RTX 5090, NVIDIA retire aussi la RTX 5080 de sa boutique officielle",
+   "b": "NVIDIA accélère sur la GeForce RTX 5080 24 Go : lancement prévu en janvier 2027 voire un peu plus tôt",
+   "same": false
+  },
+  {
+   "a": "Boulanger n’attend pas le 27 novembre et lance son Black Friday sur les TV OLED et Mini LED",
+   "b": "Ce TV OLED 4K (165 Hz) avec Ambilight de Philips voit son prix baisser de 200 € grâce au Black Friday",
+   "same": false
+  },
+  {
+   "a": "Pour Sam Altman, la RAM de votre PC devrait plutôt aller dans les data centers",
+   "b": "Le patron d’OpenAI juge « terrible » que votre PC garde sa propre RAM et préfèrerait la voir dans ses datacenters",
+   "same": true
+  },
+  {
+   "a": "« Ignares incompétents » : Xavier Niel fustige les députés socialistes à l’origine de la taxe de 5,5 centimes par gigaoctet",
+   "b": "Remonté, Xavier Niel s’en prend aux députés « ignares incompétents » qui ont voté la taxe sur les gigaoctets",
+   "same": true
+  },
+  {
+   "a": "Smartphone, écouteurs et bracelet : le pack Xiaomi 17T Pro passe en mode Black Friday (-31%)",
+   "b": "AliExpress n’attend pas le Black Friday : le Honor 600 Pro chute à 507,64€ pour le début du Single Day",
+   "same": false
+  },
+  {
+   "a": "En Chine, le premier film entièrement réalisé par l'intelligence artificielle pour le cinéma boudé par le public",
+   "b": "En Chine, le premier film entièrement généré par IA est un flop",
+   "same": true
+  },
+  {
+   "a": "Le patron d’OpenAI juge « terrible » que votre PC garde sa propre RAM et préfèrerait la voir dans ses datacenters",
+   "b": "Sam Altman déplore que la RAM soit sous-utilisée sur des PC au lieu d’équiper les centres de données pour l’IA",
+   "same": true
+  },
+  {
+   "a": "« Ignares incompétents » : Xavier Niel fustige les députés socialistes à l’origine de la taxe de 5,5 centimes par gigaoctet",
+   "b": "Actualité : Xavier Niel à propos des députés socialistes derrière la taxe de 5,5 centimes par gigaoctet : \"Des ignares incompétents qui ne savent rien faire d'autre que créer de nouveaux impôts\"",
+   "same": true
+  },
+  {
+   "a": "Netflix, Prime Video, Disney+ : quelles sont les séries à voir en novembre 2026 ?",
+   "b": "Netflix France : 14 films et séries à voir en novembre 2026",
+   "same": false
+  },
+  {
+   "a": "Ce TV OLED 4K (165 Hz) avec Ambilight de Philips voit son prix baisser de 200 € grâce au Black Friday",
+   "b": "Le LG OLED48C6, petit TV OLED à 165 Hz taillé pour le jeu, chute sous les 900 € chez Boulanger",
+   "same": true
+  },
+  {
+   "a": "Mistral ouvre les poids de Mistral Large 4 et se rapproche d'Orange Cyberdefense",
+   "b": "Mistral AI ouvre à Orange Cyberdefense l'accès anticipé à une version spécialisée de Large 4",
+   "same": true
+  },
+  {
+   "a": "Piratage de Binance : ce que l’on sait sur le plus gros vol de cryptomonnaies de l’histoire",
+   "b": "Piratage de la plateforme de cryptomonnaies Binance : le FBI accuse la Corée du Nord",
+   "same": false
+  },
+  {
+   "a": "Binance : 6,3 milliards de dollars dérobés dans un casse crypto record",
+   "b": "Cryptomonnaie : Quelles conséquences après le piratage à Binance et ses 6,3 milliards de dollars dérobés ?",
+   "same": true
+  },
+  {
+   "a": "\"Ça leur fait une publicité énorme\": entre prestige et démonstration des capacités de leurs modèles, pourquoi les mathématiques sont devenus le terrain de jeu des entreprises d'IA?",
+   "b": "IA ouverte ou IA fermée : pourquoi ça fait une différence ?",
+   "same": false
+  },
+  {
+   "a": "Des milliers de Français ont dit adieu au Livret A pour le remplacer par ce livret d'épargne à 3,5 %",
+   "b": "Livret A à 8,5 % : ce jour où le taux du produit d’épargne préféré des Français a battu son record",
+   "same": false
+  },
+  {
+   "a": "C’est déjà le Black Friday chez Boulanger : le Samsung Galaxy S25 FE s’affiche avec 250€ de moins sur le site",
+   "b": "Actualité : Black Friday 2026 – Le smartphone Samsung Galaxy S25 FE à 499,00 € (-27%)",
+   "same": true
+  },
+  {
+   "a": "Les gamers ne font que le répéter, c’est sur ce site que l’on peut trouver la Nintendo Switch 2 au meilleur prix",
+   "b": "11.11 d'AliExpress : la Nintendo Switch 2 repasse sous son prix officiel",
+   "same": true
+  },
+  {
+   "a": "Actualité : Bon plan – Le smartphone Samsung Galaxy A57 5G 128 Go à 369,00 € (-10%)",
+   "b": "Le Samsung Galaxy A57 est enfin à moitié prix",
+   "same": false
+  },
+  {
+   "a": "Manifestations du 31 octobre : La messagerie Bitchat, qui fonctionne sans Internet, connaît un succès inédit",
+   "b": "Manifestations, festivals, pannes de réseau : pourquoi la messagerie Bitchat séduit autant",
+   "same": true
+  },
+  {
+   "a": "Black Friday audio : des enceintes, barres de son et casques sans fil remisés jusqu’à 65 %",
+   "b": "Black Friday : pCloud fait gagner jusqu'à 10 To de stockage à vie",
+   "same": true
+  },
+  {
+   "a": "Des milliers de Français ont dit adieu au Livret A pour le remplacer par ce livret d'épargne à 3,5 %",
+   "b": "Livret D : c’est quoi cette nouvelle épargne à 3,5 % qui veut concurrencer le Livret A ?",
+   "same": false
+  },
+  {
+   "a": "Piratage de Binance : ce que l’on sait sur le plus gros vol de cryptomonnaies de l’histoire",
+   "b": "Piratage de la plateforme de cryptomonnaies Binance : la plateforme annonce rouvrir les retraits, le FBI accuse la Corée du Nord du « casse du siècle »",
+   "same": false
+  },
+  {
+   "a": "Le premier film généré à 100% par IA fait un flop",
+   "b": "IA ouverte ou IA fermée : pourquoi ça fait une différence ?",
+   "same": true
+  },
+  {
+   "a": "« Le SMS de la mort » : ce simple message peut rendre votre smartphone inutilisable",
+   "b": "Un seul SMS invisible peut faire planter votre téléphone Android, et même couper un appel d’urgence",
+   "same": false
+  },
+  {
+   "a": "Amazon confirme que Prime Video est rentable et génère des milliards de dollars",
+   "b": "Actualité : The Greatest : c'est quoi cette série sur Mohamed Ali qui arrive sur Prime Video ?",
+   "same": true
+  },
+  {
+   "a": "Erreur de prix ou offre innatendue sur l’iPhone 18 Pro ? Cette offre déchaine les foules ce dimanche",
+   "b": "iPhone 18 Pro vs Google Pixel 11 Pro : comment choisir le meilleur smartphone haut de gamme ?",
+   "same": true
+  },
+  {
+   "a": "IA ouverte ou IA fermée : pourquoi ça fait une différence ?",
+   "b": "« Ça me fait du bien d’avoir quelqu’un à qui parler » : en Corée du Sud, des seniors trompent leur solitude grâce à des poupées dotées d’IA",
+   "same": false
+  },
+  {
+   "a": "Intel, Amazon, Google : Wall Street fait les comptes de l’IA, et ils ne sont pas bons",
+   "b": "Le premier film généré à 100% par IA fait un flop",
+   "same": false
+  },
+  {
+   "a": "Amazon réalise un coup de maître : le Google Pixel 11 se déstocke par centaines avec cette offre soudaine",
+   "b": "iPhone 18 Pro vs Google Pixel 11 Pro : comment choisir le meilleur smartphone haut de gamme ?",
+   "same": false
+  },
+  {
+   "a": "Votre banquier n'en parle pas ? Voici l'épargne à 3,5 % qui a séduit des milliers de Français en 2026",
+   "b": "Ce n’est pas une arnaque : 8 millions de Français perdront leur argent s’ils ne répondent pas à leur banquier",
+   "same": false
+  },
+  {
+   "a": "Cyberattaque contre Binance : comment des plateformes de cryptomonnaies peuvent se faire dévaliser ?",
+   "b": "Piratage de la plateforme de cryptomonnaies Binance : le FBI accuse la Corée du Nord",
+   "same": true
+  },
+  {
+   "a": "11.11 et Black Friday : les 25 meilleures offres tech du week-end chez AliExpress, Boulanger et Amazon",
+   "b": "Le Black Friday chinois démarre fort : voici les meilleures offres en DIRECT pour le 11.11",
+   "same": false
+  },
+  {
+   "a": "Actualité : Disney+ : les nouveaux films et séries qui arrivent en streaming en novembre 2026",
+   "b": "Netflix France : 14 films et séries à voir en novembre 2026",
+   "same": false
+  },
+  {
+   "a": "Taxe sur les gigaoctets : surréaliste, GTA 6 pourrait coûter 11,55 € de plus, Netflix jusqu'à 3 € par mois",
+   "b": "GTA 6 : le moindre crime risque de vous coûter très cher",
+   "same": false
+  },
+  {
+   "a": "Piratage de Binance : ce que l’on sait sur le plus gros vol de cryptomonnaies de l’histoire",
+   "b": "Le FBI accuse un pays du piratage de 6,3 milliards de dollars sur Binance : une liste d’adresses vient d’être publiée",
+   "same": true
+  },
+  {
+   "a": "AI World 2026 : Oracle déplace la sécurité des IA dans les données",
+   "b": "J'ai laissé une IA prendre le contrôle de ma maison connectée : la promesse à l'épreuve du quotidien",
+   "same": true
+  },
+  {
+   "a": "Black Friday : le dernier aspirateur Roomba d’iRobot passe sous les 600 € chez Boulanger",
+   "b": "Black Friday : pCloud fait gagner jusqu'à 10 To de stockage à vie",
+   "same": true
+  },
+  {
+   "a": "Les gamers ne font que le répéter, c’est sur ce site que l’on peut trouver la Nintendo Switch 2 au meilleur prix",
+   "b": "La Nintendo Switch 2 revient en promo à moins de 400 € pour le Black Friday chinois",
+   "same": false
+  },
+  {
+   "a": "Black Friday : le dernier aspirateur Roomba d’iRobot passe sous les 600 € chez Boulanger",
+   "b": "Black Friday audio : des enceintes, barres de son et casques sans fil remisés jusqu’à 65 %",
+   "same": false
+  },
+  {
+   "a": "Actualité : Black Friday 2026 – Le barbecue et plancha Riviera-et-Bar QPL650 à 199,99 € (-12%)",
+   "b": "Black Friday : pCloud fait gagner jusqu'à 10 To de stockage à vie",
+   "same": false
+  },
+  {
+   "a": "\"Ça leur fait une publicité énorme\": entre prestige et démonstration des capacités de leurs modèles, pourquoi les mathématiques sont devenus le terrain de jeu des entreprises d'IA?",
+   "b": "« Ça me fait du bien d’avoir quelqu’un à qui parler » : en Corée du Sud, des seniors trompent leur solitude grâce à des poupées dotées d’IA",
+   "same": true
+  },
+  {
+   "a": "Amazon réalise un coup de maître : le Google Pixel 11 se déstocke par centaines avec cette offre soudaine",
+   "b": "Dimanche à 10h32 : ce Google Pixel est moins cher qu'à son habitude, mais pour combien de temps ?",
+   "same": false
+  },
+  {
+   "a": "Actualité : Black Friday 2026 – Le smartphone Samsung Galaxy S25 FE à 499,00 € (-27%)",
+   "b": "Black Friday audio : des enceintes, barres de son et casques sans fil remisés jusqu’à 65 %",
+   "same": false
+  },
+  {
+   "a": "Google Cloud décolle, mais l’intégration de l’IA générative dans la recherche fait vaciller le modèle économique de Google",
+   "b": "15 ans d’efforts écologiques balayés par la course aux data centers IA : cette étude fait froid dans le dos",
+   "same": false
+  },
+  {
+   "a": "Actualité : Black Friday 2026 – L'aspirateur traîneau Bosch Relaxx'x Ultimate ProSilence64 BGS7SIL64 \"5 étoiles\" à 229,00 € (-39%)",
+   "b": "Black Friday : pCloud fait gagner jusqu'à 10 To de stockage à vie",
+   "same": false
+  },
+  {
+   "a": "En Chine, le premier film entièrement réalisé par l'intelligence artificielle pour le cinéma boudé par le public",
+   "b": "Attention à ce message WhatsApp, il permet aux pirates de prendre le contrôle de votre compte",
+   "same": false
+  },
+  {
+   "a": "En Chine, le premier film entièrement réalisé par l'intelligence artificielle pour le cinéma boudé par le public",
+   "b": "Jusqu’à 200 dollars par mois en louant son Mac à l’IA : deux mois après, le rêve s’effondre",
+   "same": false
+  },
+  {
+   "a": "En Chine, le premier film entièrement réalisé par l'intelligence artificielle pour le cinéma boudé par le public",
+   "b": "Après le « Crackgate », voici le « Gapgate », un autre problème embarrassant pour l'iPhone Duo",
+   "same": false
+  },
+  {
+   "a": "En Chine, le premier film entièrement réalisé par l'intelligence artificielle pour le cinéma boudé par le public",
+   "b": "Actualité : Gmail : j’ai ajouté un simple “+” à mon adresse et découvert d’où venaient mes spams",
+   "same": false
+  },
+  {
+   "a": "« Le SMS de la mort » : ce simple message peut rendre votre smartphone inutilisable",
+   "b": "RTX 5060 et 16 Go de RAM : le Lenovo LOQ 15 passe sous les 1100€ chez Amazon",
+   "same": false
+  },
+  {
+   "a": "« Le SMS de la mort » : ce simple message peut rendre votre smartphone inutilisable",
+   "b": "L'IA de Google donne accès à des centaines de manuels gratuits et aide même à réviser",
+   "same": false
+  },
+  {
+   "a": "« Le SMS de la mort » : ce simple message peut rendre votre smartphone inutilisable",
+   "b": "Un téléviseur pour la chambre à seulement 80 € ? Voici le Xiaomi TV A 32 2025",
+   "same": false
+  },
+  {
+   "a": "« Le SMS de la mort » : ce simple message peut rendre votre smartphone inutilisable",
+   "b": "La version 512 Go de l’excellent casque VR Meta Quest 3 est presque à moitié prix",
+   "same": false
+  }
+ ],
+ "articles": [
+  {
+   "title": "La Nintendo Switch 2 revient en promo à moins de 400 € pour le Black Friday chinois",
+   "url": "https://frandroid.com/bons-plans/3305739_la-nintendo-switch-2-revient-en-promo-a-moins-de-400-e-pour-le-black-friday-chinois",
+   "category": "tech",
+   "promo": true
+  },
+  {
+   "title": "Actualité : Le test des écouteurs & intras filaires Bose Noise Cancelling Wired Earbuds a rejoint notre comparatif",
+   "url": "https://lesnumeriques.com/ecouteurs-intras-filaires/le-test-des-ecouteurs-intras-filaires-bose-noise-cancelling-wired-earbuds-a-rejoint-notre-comparatif-n266236.html",
+   "category": "tech",
+   "promo": false
+  },
+  {
+   "title": "« Un véritable changement de paradigme » : comment l’agence IA des armées planche sur cette technologie de rupture",
+   "url": "https://numerama.com/tech/2359979-un-veritable-changement-de-paradigme-comment-lagence-ia-des-armees-planche-sur-cette-technologie-de-rupture-interview.html",
+   "category": "tech",
+   "promo": false
+  },
+  {
+   "title": "Ne mangez pas en scrollant !",
+   "url": "https://franceinfo.fr/replay-radio/c-est-ma-sante/ne-mangez-pas-en-scrollant_8241130.html",
+   "category": "tech",
+   "promo": false
+  },
+  {
+   "title": "Attention à ce message WhatsApp, il permet aux pirates de prendre le contrôle de votre compte",
+   "url": "https://01net.com/actualites/attention-a-ce-message-whatsapp-il-permet-aux-pirates-de-prendre-le-controle-de-votre-compte.html",
+   "category": "tech",
+   "promo": false
+  },
+  {
+   "title": "Actualité : Halloween : ExpressVPN casse ses prix avec jusqu’à 80 % de réduction et 4 mois offerts",
+   "url": "https://lesnumeriques.com/vpn/halloween-expressvpn-casse-ses-prix-avec-jusqu-a-80-de-reduction-et-4-mois-offerts-n263908.html",
+   "category": "tech",
+   "promo": true
+  },
+  {
+   "title": "Prime Video : les 5 meilleures séries d’horreur pour une livraison de terreur en 24h",
+   "url": "https://numerama.com/pop-culture/2362581-prime-video-les-meilleures-series-dhorreur-pour-une-livraison-de-terreur-en-24h.html",
+   "category": "tech",
+   "promo": false
+  },
+  {
+   "title": "Je porte des lunettes XR tous les jours pour aller au travail, pourquoi le dernier modèle de Xreal est mon choix numéro 1",
+   "url": "https://zdnet.fr/guide-achat/je-porte-des-lunettes-xr-tous-les-jours-pour-aller-au-travail-pourquoi-le-dernier-modele-de-xreal-est-mon-choix-numero-1-507015.htm",
+   "category": "tech",
+   "promo": false
+  },
+  {
+   "title": "Votre accès au “cœur d’internet” va disparaître si vous ne créez pas un compte : voici le gros changement que le CEO de Reddit vient d’annoncer",
+   "url": "https://presse-citron.net/acces-coeur-internet-changement-reddit",
+   "category": "tech",
+   "promo": false
+  },
+  {
+   "title": "Un seul SMS invisible peut faire planter votre téléphone Android, et même couper un appel d’urgence",
+   "url": "https://clubic.com/actualite-636958-un-seul-sms-invisible-peut-faire-planter-votre-telephone-android-et-meme-couper-un-appel-d-urgence.html",
+   "category": "tech",
+   "promo": false
+  },
+  {
+   "title": "Actualité : Gmail : j’ai ajouté un simple “+” à mon adresse et découvert d’où venaient mes spams",
+   "url": "https://lesnumeriques.com/societe-numerique/gmail-j-ai-ajoute-un-simple-a-mon-adresse-et-decouvert-d-ou-venaient-mes-spams-223-n258505.html",
+   "category": "tech",
+   "promo": false
+  },
+  {
+   "title": "Mémoire RAM : les prix augmentent, mais la production pourrait baisser de 40 % en 2027",
+   "url": "https://frandroid.com/culture-tech/economie/3304937_memoire-ram-les-prix-augmentent-mais-la-production-pourrait-baisser-de-40-en-2027",
+   "category": "tech",
+   "promo": false
+  },
+  {
+   "title": "Memdoor: A team of 5 Qwen3.8-27B models beats Fable 5 on LiveCodeBench Hard",
+   "url": "https://github.com/guregodevo/memdoor/tree/main/examples/workflows/team-solve",
+   "category": "tech",
+   "promo": false
+  },
+  {
+   "title": "La CNIL inflige 7 millions d’euros d’amende à Fnac Darty pour avoir collecté des données sans consentement",
+   "url": "https://siecledigital.fr/2026/10/30/la-cnil-inflige-7-millions-deuros-damende-a-fnac-darty-pour-avoir-collecte-des-donnees-sans-consentement",
+   "category": "tech",
+   "promo": false
+  },
+  {
+   "title": "Après le Brésil, la France ? Comment les « insoumis » tentent de s’inspirer du « janonisme » en ligne",
+   "url": "https://lemonde.fr/pixels/article/2026/10/30/apres-le-bresil-la-france-comment-les-insoumis-tentent-de-s-inspirer-du-janonisme-en-ligne_6803110_4408996.html",
+   "category": "tech",
+   "promo": false
+  },
+  {
+   "title": "TF1 ferme définitivement ce service populaire disponible sur les box Free, Orange et Bouygues Telecom",
+   "url": "https://clubic.com/actualite-636985-tf1-ferme-definitivement-ce-service-populaire-disponible-sur-les-box-free-orange-et-bouygues-telecom.html",
+   "category": "tech",
+   "promo": false
+  },
+  {
+   "title": "Une chute de près de 30 % à l’ouverture des marchés : la crise des ventes de PC plombe Intel",
+   "url": "https://lefigaro.fr/societes/une-chute-de-pres-de-30-a-l-ouverture-des-marches-la-crise-des-ventes-de-pc-plombe-intel-20261030",
+   "category": "tech",
+   "promo": false
+  },
+  {
+   "title": "En Chine, le premier film entièrement généré par IA est un flop",
+   "url": "https://journaldugeek.com/2026/11/01/en-chine-le-premier-film-entierement-genere-par-ia-est-un-flop",
+   "category": "tech",
+   "promo": false
+  },
+  {
+   "title": "Actualité : Comment votre smartphone lit votre empreinte digitale à travers l’écran pour le déverrouiller",
+   "url": "https://lesnumeriques.com/telephone-portable/comment-votre-smartphone-lit-votre-empreinte-digitale-a-travers-l-ecran-pour-le-deverrouiller-n264024.html",
+   "category": "tech",
+   "promo": false
+  },
+  {
+   "title": "Japan Game Fest 2 : Lyon va accueillir une légende de la musique du jeu vidéo, Yuzo Koshiro",
+   "url": "https://clubic.com/actualite-636211-japan-game-fest-2-lyon-va-accueillir-une-legende-de-la-musique-du-jeu-video-yuzo-koshiro.html",
+   "category": "tech",
+   "promo": false
+  },
+  {
+   "title": "Amazon distribue comme des petits pains cette PS5 numérique ce dimanche 1er novembre",
+   "url": "https://bfmtv.com/tech/bons-plans/amazon-distribue-comme-des-petits-pains-cette-ps5-numerique-ce-dimanche-1er-novembre_AB-202611010026.html",
+   "category": "tech",
+   "promo": true
+  },
+  {
+   "title": "Depuis qu'il a atteint ce prix, ce casque Bose se fait liquider par conteneurs chez Boulanger et personne n'en revient",
+   "url": "https://bfmtv.com/tech/bons-plans/depuis-qu-il-a-atteint-ce-prix-ce-casque-bose-se-fait-liquider-par-conteneurs-chez-boulanger-et-personne-n-en-revient_AB-202611010036.html",
+   "category": "tech",
+   "promo": true
+  },
+  {
+   "title": "Seulement 17,49 €, c’est le tout petit prix des écouteurs CMF by Nothing Buds 2 à l’autonomie surprenante",
+   "url": "https://frandroid.com/bons-plans/3008775_seulement-17-euros-cest-le-tout-petit-prix-des-ecouteurs-cmf-by-nothing-buds-2-a-lautonomie-surprenante",
+   "category": "tech",
+   "promo": true
+  },
+  {
+   "title": "Des IA autonomes pourraient bientôt créer leurs propres botnets",
+   "url": "https://begeek.fr/des-ia-autonomes-pourraient-bientot-creer-leurs-propres-botnets-442223",
+   "category": "tech",
+   "promo": false
+  },
+  {
+   "title": "Tablette ou PC portable ? Plus besoin de choisir, Dell a trouvé la solution pour plaire à tous les français",
+   "url": "https://bfmtv.com/tech/bons-plans/tablette-ou-pc-portable-plus-besoin-de-choisir-dell-a-trouve-la-solution-pour-plaire-a-tous-les-francais_AB-202611010066.html",
+   "category": "tech",
+   "promo": true
+  },
+  {
+   "title": "Les nouveaux Galaxy Buds On de Samsung, de type « clip », présentent un avantage majeur par rapport aux modèles de Sony et de Bose",
+   "url": "https://zdnet.fr/guide-achat/les-nouveaux-galaxy-buds-on-de-samsung-de-type-clip-presentent-un-avantage-majeur-par-rapport-aux-modeles-de-sony-et-de-bose-506785.htm",
+   "category": "tech",
+   "promo": false
+  },
+  {
+   "title": "Norway makes shithouses great again",
+   "url": "https://visitnorway.com/plan-your-trip/travel-tips-a-z/norwegian-scenic-routes/worlds-best-toilets",
+   "category": "tech",
+   "promo": false
+  },
+  {
+   "title": "« Ça me fait du bien d’avoir quelqu’un à qui parler » : en Corée du Sud, des seniors trompent leur solitude grâce à des poupées dotées d’IA",
+   "url": "https://lemonde.fr/intimites/article/2026/11/01/ca-me-fait-du-bien-d-avoir-quelqu-un-a-qui-parler-en-coree-du-sud-des-seniors-trompent-leur-solitude-grace-a-des-poupees-dotees-d-ia_6804519_6190330.html",
+   "category": "tech",
+   "promo": false
+  },
+  {
+   "title": "La France soumet une ex-frégate à une explosion sous-marine, une première depuis des années",
+   "url": "https://clubic.com/actualite-637007-la-france-soumet-une-ex-fregate-a-une-explosion-sous-marine-une-premiere-depuis-des-annees.html",
+   "category": "tech",
+   "promo": false
+  },
+  {
+   "title": "French Tech : l’IA concentre plus de 90 % des 41 millions d’euros levés cette semaine",
+   "url": "https://maddyness.com/2026/10/30/french-tech-lia-concentre-plus-de-90-des-41-millions-deuros-leves-cette-semaine",
+   "category": "startups",
+   "promo": false
+  },
+  {
+   "title": "Elon Musk a un conseil pour votre argent. Surprise : il ne fait pas l’unanimité",
+   "url": "https://01net.com/actualites/elon-musk-a-un-conseil-pour-votre-argent-surprise-il-ne-fait-pas-lunanimite.html",
+   "category": "tech",
+   "promo": false
+  },
+  {
+   "title": "\"Ça leur fait une publicité énorme\": entre prestige et démonstration des capacités de leurs modèles, pourquoi les mathématiques sont devenus le terrain de jeu des entreprises d'IA?",
+   "url": "https://bfmtv.com/tech/intelligence-artificielle/ca-leur-fait-une-publicite-enorme-entre-prestige-et-demonstration-des-capacites-de-leurs-modeles-pourquoi-les-mathematiques-sont-devenus-le-terrain-de-jeu-des-entreprises-d-ia_AV-202610310051.html",
+   "category": "tech",
+   "promo": false
+  },
+  {
+   "title": "\"Je m'inquiète de ce que les producteurs vont faire de mon image\" : en Chine, les acteurs sont de plus en plus remplacés par des IA",
+   "url": "https://franceinfo.fr/replay-radio/le-choix-franceinfo/je-m-inquiete-de-ce-que-les-producteurs-vont-faire-de-mon-image-en-chine-les-acteurs-sont-de-plus-en-plus-remplaces-par-des-ia_8241151.html",
+   "category": "tech",
+   "promo": false
+  },
+  {
+   "title": "Le coût du SaaS explose! Bon et alors, on fait quoi ?",
+   "url": "https://zdnet.fr/blogs/green-si/le-cout-du-saas-explose-bon-alors-on-fait-quoi-507036.htm",
+   "category": "tech",
+   "promo": false
+  },
+  {
+   "title": "☕️ Windows 11 a son nouveau menu contextuel et oui, il est « rapide »",
+   "url": "https://next.ink/brief-article/windows-11-a-son-nouveau-menu-contextuel-et-oui-il-est-rapide",
+   "category": "tech",
+   "promo": false
+  },
+  {
+   "title": "Piratage de Binance : Comment expliquer ce casse de 6,3 milliards de dollars sans fuite de clés privées ?",
+   "url": "https://usine-digitale.fr/cybersecurite/piratage-de-binance-comment-expliquer-ce-casse-de-63-milliards-de-dollars-sans-fuite-de-cles-privees.C5QUTSS6HFF25NL2HDEXSGCCPM.html",
+   "category": "tech",
+   "promo": false
+  },
+  {
+   "title": "Actualité : Disney+ : les nouveaux films et séries qui arrivent en streaming en novembre 2026",
+   "url": "https://lesnumeriques.com/cine-svod/disney-les-nouveaux-films-et-series-qui-arrivent-en-streaming-en-novembre-2026-n263927.html",
+   "category": "tech",
+   "promo": false
+  },
+  {
+   "title": "Actualité : Cette montre connectée présente le meilleur rapport qualité / prix de notre comparatif",
+   "url": "https://lesnumeriques.com/montre-connectee/cette-montre-connectee-presente-le-meilleur-rapport-qualite-prix-de-notre-comparatif-n266593.html",
+   "category": "tech",
+   "promo": true
+  },
+  {
+   "title": "« Ignares incompétents » : Xavier Niel fustige les députés socialistes à l’origine de la taxe de 5,5 centimes par gigaoctet",
+   "url": "https://numerama.com/tech/2365207-ignares-incompetents-xavier-niel-fustige-les-deputes-socialistes-a-lorigine-de-la-taxe-de-55-centimes-par-gigaoctet.html",
+   "category": "tech",
+   "promo": false
+  },
+  {
+   "title": "On a testé Eney, l'assistant IA pour macOS développé par MacPaw",
+   "url": "https://clubic.com/avis-635662-eney-que-vaut-l-assistant-ia-pour-macos-developpe-par-macpaw.html",
+   "category": "tech",
+   "promo": false
+  },
+  {
+   "title": "PC portables à moins de 1000 € : les 6 meilleurs modèles du moment, testés et comparés",
+   "url": "https://frandroid.com/guide-dachat/638396_quels-sont-les-meilleurs-pc-portables-a-moins-de-1000-euros-en-2019",
+   "category": "tech",
+   "promo": true
+  },
+  {
+   "title": "Comment faire l'impasse quand BforBank fait cette offre de 330 euros ? Les internautes s'affolent",
+   "url": "https://bfmtv.com/tech/bons-plans/banque-en-ligne/comment-faire-l-impasse-quand-bfor-bank-fait-cette-offre-de-330-euros-les-internautes-s-affolent_AB-202610310046.html",
+   "category": "tech",
+   "promo": true
+  },
+  {
+   "title": "Actualité : Bon plan – La cafetière Philips L'OR Barista à 59,98 € (-17%)",
+   "url": "https://lesnumeriques.com/cafetiere-capsule/bon-plan-la-cafetiere-philips-l-or-barista-a-59-98-17-n266617.html",
+   "category": "tech",
+   "promo": true
+  },
+  {
+   "title": "Actualité : Placer un morceau d'aluminium derrière votre box internet : à quoi cela sert-il et pourquoi le faire aujourd'hui ?",
+   "url": "https://lesnumeriques.com/informatique/placer-un-morceau-d-aluminium-derriere-votre-box-internet-a-quoi-cela-sert-il-et-pourquoi-le-faire-aujourd-hui-221-n261914.html",
+   "category": "tech",
+   "promo": false
+  },
+  {
+   "title": "Actualité : Adieu Visa et Mastercard : 130 millions d'Européens passent au paiement 100 % souverain",
+   "url": "https://lesnumeriques.com/banque-en-ligne/adieu-visa-et-mastercard-130-millions-d-europeens-passent-au-paiement-100-souverain-224-n250918.html",
+   "category": "tech",
+   "promo": false
+  },
+  {
+   "title": "Test ASUS ProArt P16 RTX Spark : NVIDIA tient son pari… mais à quel prix ?",
+   "url": "https://clubic.com/test-produit-635263-test-asus-proart-p16-rtx-spark-nvidia-tient-son-pari-mais-a-quel-prix.html",
+   "category": "tech",
+   "promo": false
+  },
+  {
+   "title": "Actualité : 01 62, 04 24, 05 68... Voici les séries de numéros réservées au démarchage que vous devez connaître",
+   "url": "https://lesnumeriques.com/mobilite-c17/01-62-04-24-05-68-voici-les-series-de-numeros-reservees-au-demarchage-que-vous-devez-connaitre-219-n251813.html",
+   "category": "tech",
+   "promo": false
+  },
+  {
+   "title": "Si Washington coupe le robinet, on fait quoi ? La France dispose désormais de sa propre IA de cybersécurité que personne ne peut débrancher",
+   "url": "https://journaldugeek.com/2026/11/01/mistral-france-dispose-ia-cybersecurite",
+   "category": "tech",
+   "promo": false
+  },
+  {
+   "title": "Harley-Davidson dans la tourmente : pourquoi sa filiale de motos électriques est à deux doigts de disparaître",
+   "url": "https://presse-citron.net/harley-davidson-dans-la-tourmente-pourquoi-sa-filiale-de-motos-electriques-est-a-deux-doigts-de-disparaitre",
+   "category": "tech",
+   "promo": false
+  },
+  {
+   "title": "Free enrage la concurrence depuis hier soir : voici la box internet à laquelle des centaines de français souscrivent en cachette",
+   "url": "https://bfmtv.com/tech/bons-plans/free-enrage-la-concurrence-depuis-hier-soir-voici-la-box-internet-a-laquelle-des-centaines-de-francais-souscrivent-en-cachette_AB-202610310043.html",
+   "category": "tech",
+   "promo": true
+  },
+  {
+   "title": "Le Framework 12 est le PC idéal pour les passionnés de bricolage, et un vrai bonheur pour les utilisateurs de Linux",
+   "url": "https://zdnet.fr/guide-achat/le-framework-12-est-le-pc-ideal-pour-les-passionnes-de-bricolage-et-un-vrai-bonheur-pour-les-utilisateurs-de-linux-507018.htm",
+   "category": "tech",
+   "promo": false
+  },
+  {
+   "title": "Votre banquier n'en parle pas ? Voici l'épargne à 3,5 % qui a séduit des milliers de Français en 2026",
+   "url": "https://bfmtv.com/tech/bons-plans/banque-en-ligne/votre-banquier-n-en-parle-pas-voici-l-epargne-a-3-5-qui-a-seduit-des-milliers-de-francais-en-2026_AB-202610310020.html",
+   "category": "tech",
+   "promo": true
+  },
+  {
+   "title": "AI World 2026 : Oracle déplace la sécurité des IA dans les données",
+   "url": "https://lemagit.fr/actualites/366653156/AI-World-2026-Oracle-deplace-la-securite-des-IA-dans-les-donnees",
+   "category": "tech",
+   "promo": false
+  },
+  {
+   "title": "En Chine, le premier film entièrement réalisé par l'intelligence artificielle pour le cinéma boudé par le public",
+   "url": "https://franceinfo.fr/replay-radio/bientot-chez-vous/en-chine-le-premier-film-entierement-realise-par-l-intelligence-artificielle-pour-le-cinema-boude-par-le-public_8239480.html",
+   "category": "tech",
+   "promo": false
+  },
+  {
+   "title": "«Il est très vraisemblable que de l’IA ait été employée» : derrière le casse contre Binance, la menace de la sophistication des cyberattaques",
+   "url": "https://lefigaro.fr/secteur/high-tech/il-est-tres-vraisemblable-que-de-l-ia-ait-ete-employee-derriere-le-casse-contre-binance-la-menace-de-la-sophistication-des-cyberattaques-20261030",
+   "category": "tech",
+   "promo": false
+  },
+  {
+   "title": "12 minutes pour télécharger toutes les données de l’humanité : la Chine dévoile une fibre optique aux performances vertigineuses",
+   "url": "https://01net.com/actualites/12-minutes-pour-telecharger-toutes-les-donnees-de-lhumanite-la-chine-devoile-une-fibre-optique-aux-performances-vertigineuses.html",
+   "category": "tech",
+   "promo": false
+  },
+  {
+   "title": "GTA, un studio en Ecosse, un bug et beaucoup d’irrévérence : il y a quarante ans, naissait un jeu vidéo mythique",
+   "url": "https://lemonde.fr/m-le-mag/article/2026/11/01/gta-un-studio-en-ecosse-un-bug-et-beaucoup-d-irreverence-il-y-a-quarante-ans-naissait-un-jeu-video-mythique_6804021_4500055.html",
+   "category": "tech",
+   "promo": false
+  },
+  {
+   "title": "Un satellite, une IA et un poème, Google vient de réussir une expérience assez folle dans l'espace",
+   "url": "https://clubic.com/actualite-637000-un-satellite-une-ia-et-un-poeme-google-vient-de-reussir-une-experience-assez-folle-dans-l-espace.html",
+   "category": "tech",
+   "promo": false
+  },
+  {
+   "title": "Disney relance La Princesse et la Grenouille, mais autrement",
+   "url": "https://begeek.fr/disney-relance-la-princesse-et-la-grenouille-mais-autrement-442190",
+   "category": "tech",
+   "promo": false
+  },
+  {
+   "title": "Stellantis reprend des couleurs, mais la convalescence s’annonce longue",
+   "url": "https://numerama.com/vroom/2363899-stellantis-reprend-des-couleurs-mais-la-convalescence-sannonce-longue.html",
+   "category": "tech",
+   "promo": false
+  },
+  {
+   "title": "J’ai testé la Peugeot e-208 GTi : l’État m’offre 3 600 € pour rouler en sportive, mais ce défaut va vous refroidir",
+   "url": "https://presse-citron.net/test-peugeot-e-208-gti-etat-offre-3-600-euros-rouler-sportive-mais-defaut-va-refroidir",
+   "category": "tech",
+   "promo": false
+  },
+  {
+   "title": "Sur Tubi, ce film SF avec Adam Driver renaît grâce aux dinosaures",
+   "url": "https://begeek.fr/sur-tubi-ce-film-sf-avec-adam-driver-renait-grace-aux-dinosaures-442163",
+   "category": "tech",
+   "promo": false
+  },
+  {
+   "title": "Un Pokémon GO avec de vrais chats, il fallait y penser !",
+   "url": "https://clubic.com/actualite-636991-ce-clone-de-pokemon-go-vous-permet-d-attraper-les-chats-croises-dans-la-vraie-vie-l-idee-la-plus-insolite-du-moment.html",
+   "category": "tech",
+   "promo": false
+  },
+  {
+   "title": "Londres veut des VTC tout électriques dès 2028",
+   "url": "https://journaldugeek.com/2026/11/01/londres-veut-des-vtc-tout-electriques-des-2028",
+   "category": "tech",
+   "promo": false
+  },
+  {
+   "title": "Le Black Friday chinois démarre fort : voici les meilleures offres en DIRECT pour le 11.11",
+   "url": "https://frandroid.com/bons-plans/3305805_le-black-friday-chinois-demarre-fort-voici-les-meilleures-offres-en-direct-pour-le-11-11",
+   "category": "tech",
+   "promo": true
+  },
+  {
+   "title": "Test de la Honor Pad 20 Pro : la tablette qui voulait faire de l’ombre aux PC",
+   "url": "https://presse-citron.net/honor-pad-20-pro-test",
+   "category": "tech",
+   "promo": false
+  },
+  {
+   "title": "Free Mobile choisit bien son moment pour rappeler à ses abonnés que leur forfait reste à 2 euros",
+   "url": "https://clubic.com/actualite-637015-free-mobile-choisit-bien-son-moment-pour-rappeler-a-ses-abonnes-que-leur-forfait-reste-a-2-euros.html",
+   "category": "tech",
+   "promo": false
+  },
+  {
+   "title": "F1, Top 14 et films récents : CANAL+ tombe à 15,99€/mois pendant 2 ans ce weekend",
+   "url": "https://clubic.com/bons-plans-636907-f1-top-14-et-films-recents-canal-tombe-a-15-99-mois-pendant-2-ans-ce-weekend.html",
+   "category": "tech",
+   "promo": true
+  },
+  {
+   "title": "Dossier : “La durée de vie des objets est une affaire politique” : à l’approche de 2027, le secteur de la réparation se prononce timidement",
+   "url": "https://lesnumeriques.com/societe-numerique/la-duree-de-vie-des-objets-est-une-affaire-politique-a-l-approche-de-2027-le-secteur-de-la-reparation-se-prononce-timidement-a263502.html",
+   "category": "tech",
+   "promo": false
+  },
+  {
+   "title": "Amazon riposte à Boulanger avec le nouveau Redmi Note 17 Pro à moins de 400 €",
+   "url": "https://clubic.com/bons-plans-636988-amazon-riposte-a-boulanger-avec-le-nouveau-redmi-note-17-pro-a-moins-de-400.html",
+   "category": "tech",
+   "promo": true
+  },
+  {
+   "title": "11.11 et Black Friday : les 25 meilleures offres tech du week-end chez AliExpress, Boulanger et Amazon",
+   "url": "https://clubic.com/bons-plans-636877-et-black-friday-les-25-meilleures-offres-tech-du-week-end-chez-aliexpress-boulanger-et-amazon.html",
+   "category": "tech",
+   "promo": true
+  },
+  {
+   "title": "Test du Epson Lifestudio Flex Plus : le vidéoprojecteur qui a remplacé notre télé",
+   "url": "https://journaldugeek.com/test/test-du-epson-lifestudio-flex-plus-le-videoprojecteur-qui-a-remplace-notre-tele",
+   "category": "tech",
+   "promo": false
+  },
+  {
+   "title": "Airbnb change ses règles et fâche les propriétaires",
+   "url": "https://franceinfo.fr/internet/airbnb/airbnb-change-ses-regles-et-fache-les-proprietaires_8260568.html",
+   "category": "tech",
+   "promo": false
+  },
+  {
+   "title": "Cette voiture peut reculer toute seule 🤯🚗",
+   "url": "https://bfmtv.com/tech/actualites/video-cette-voiture-peut-reculer-toute-seule_VN-202610310212.html",
+   "category": "tech",
+   "promo": false
+  },
+  {
+   "title": "Flock : Parcours SAW",
+   "url": "https://next.ink/265059/flock-parcours-saw",
+   "category": "tech",
+   "promo": false
+  }
+ ]
+}

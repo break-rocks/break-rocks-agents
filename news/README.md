@@ -253,6 +253,34 @@ It groups the French headlines "For Sam Altman, your PC's RAM…" and "OpenAI's 
 (two AI-and-cybersecurity headlines); a lower threshold (0.6) made 27 multi-outlet events but many were
 topics rather than stories.
 
+## Decision model (pilot, off by default)
+
+An optional second opinion from AWS's Strands Decider 2B, served locally by Ollama (Ollama 0.40 or later,
+Apple silicon): `ollama pull strands-decider`. It answers yes/no questions with a probability, no text:
+
+- "are these two headlines the same event?" for every merge the grouping proposes (a sure no rejects it)
+  and for events matched above `clustering.threshold` but below `mergeThreshold` (a sure yes merges them);
+- "is this article promotional?" beside the promo filter.
+
+It acts only when sure (`p >= high` or `p <= low`); otherwise the current method's answer stands. If
+Ollama or the model is unavailable, collect warns once and uses the current methods. Turn it on with the
+wizard question, `start --decider`, or in config.yaml:
+
+```yaml
+decider:
+  enabled: true
+  url: http://127.0.0.1:11434
+  model: strands-decider
+  high: 0.8
+  low: 0.2
+  merges: true
+  promo: true
+```
+
+`npm run eval:decider` compares the current methods, the model and the hybrid rule on
+`eval/decider-set.json` (76 pairs, 75 articles, self-labelled from the kit's own data, not an independent
+ground truth) and prints accuracy, precision, recall and the p50 latency.
+
 ## MCP tools
 
 | Tool | Input | Does |
