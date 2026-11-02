@@ -51,7 +51,7 @@ const configSchema = z.object({
     high: z.number().min(0).max(1).default(0.8),
     low: z.number().min(0).max(1).default(0.2),
     merges: z.boolean().default(true),
-    promo: z.boolean().default(true),
+    promo: z.boolean().default(false),
     timeoutMs: z.number().int().positive().default(20_000),
   }).refine((d) => d.low < d.high, 'decider.low must be below decider.high').optional(),
   retention: z.object({ articlesDays: z.number().positive().default(30), eventsDays: z.number().positive().default(180), logsDays: z.number().positive().default(30) }).prefault({}),

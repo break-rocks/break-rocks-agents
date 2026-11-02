@@ -7,7 +7,7 @@
 import type { DeciderSettings } from './types.js';
 import type { JsonPost } from './embed.js';
 
-export const DECIDER_DEFAULTS: DeciderSettings = { enabled: false, url: 'http://127.0.0.1:11434', model: 'strands-decider', high: 0.8, low: 0.2, merges: true, promo: true, timeoutMs: 20_000 };
+export const DECIDER_DEFAULTS: DeciderSettings = { enabled: false, url: 'http://127.0.0.1:11434', model: 'strands-decider', high: 0.8, low: 0.2, merges: true, promo: false, timeoutMs: 20_000 };
 
 const SAME_EVENT = 'Are these two news headlines about the same specific news event (the same happening, not merely the same topic, company, person or place)?';
 const PROMO = 'Is this article a promotion, a deal, a discount, a coupon, a shopping recommendation or an advertisement, rather than news?';
