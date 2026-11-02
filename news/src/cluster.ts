@@ -2,7 +2,7 @@
 // a time window. Embedding backend (src/embed.ts): cosine of multilingual title vectors, combined with
 // the entity overlap and the time distance, behind the same Similarity contract.
 
-export interface Signature { tokens: string[]; entities: string[]; at: string; vector?: Float32Array }
+export interface Signature { title?: string; tokens: string[]; entities: string[]; at: string; vector?: Float32Array }
 
 export interface Similarity {
   readonly name: string;

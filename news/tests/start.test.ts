@@ -82,9 +82,9 @@ describe('flags and wizard', () => {
   const show = (universes: Record<string, object>) => async (_c: string, u: string) => ({ universe: { exists: false, ...universes[u] } });
 
   it('asks for what is missing, re-asks a universe that forbids agents, confirms live', async () => {
-    const { io, asked, printed } = fakeIo(['mini', 'languages', 'fr', 'tech', '%closed', '%tech', '30m', '3', '20', 't', 'claude', 'live', 'live']);
+    const { io, asked, printed } = fakeIo(['mini', 'languages', 'fr', 'tech', '%closed', '%tech', '30m', '3', '20', 't', 'claude', 'y', 'live', 'live']);
     const a = await completeAnswers({ breakrocks: 'breakrocks', identity: { agent: 'herald', env: 'dev' } }, { home: home(), io, yes: false, skipUniverseCheck: false, existed: false, show: show({ '%closed': { exists: true, agentsForbidden: true }, '%tech': { exists: true } }) });
-    expect(a).toMatchObject({ name: 'mini', scope: { kind: 'languages', values: ['fr'] }, themes: ['tech'], universes: { tech: ['%tech'] }, every: '30m', perHour: 3, perDay: 20, verification: 'to_confirm', mode: 'live', identity: { agent: 'herald', env: 'dev' } });
+    expect(a).toMatchObject({ name: 'mini', scope: { kind: 'languages', values: ['fr'] }, themes: ['tech'], universes: { tech: ['%tech'] }, every: '30m', perHour: 3, perDay: 20, verification: 'to_confirm', mode: 'live', decider: true, identity: { agent: 'herald', env: 'dev' } });
     expect(printed.join('\n')).toMatch(/%closed: exists, FORBIDS AGENTS/);
     expect(printed.join('\n')).toMatch(/%tech: exists, agent rule unknown/);
     expect(asked.at(-1)).toMatch(/Type "live"/);
@@ -170,7 +170,7 @@ describe('caps, lock and cycle', () => {
   it('a cycle runs the AI once within the caps, drafts count, STOP stops', async () => {
     const l = launch();
     const store = openStore(l);
-    ingest(store, l, [art('Une faille critique dans un routeur', 'https://a.fr/1', { category: 'tech' }), art('Apple sort un casque', 'https://b.fr/2', { category: 'tech' })]);
+    await ingest(store, l, [art('Une faille critique dans un routeur', 'https://a.fr/1', { category: 'tech' }), art('Apple sort un casque', 'https://b.fr/2', { category: 'tech' })]);
     store.close();
     const collectFn = (async () => ({ sources: { fetched: 1, notModified: 0, notDue: 0, errors: [] }, articles: { added: 2 }, events: { created: 2 } })) as never;
     const calls: string[][] = [];

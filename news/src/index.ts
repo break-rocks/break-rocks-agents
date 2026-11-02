@@ -38,6 +38,7 @@ start flags (all optional; --yes never asks):
   --universes %a,%b              (the same universes for every theme)
   --every 30m --per-hour 4 --per-day 30 --batch 5
   --verification corroborated|to-confirm  --mode dry-run|live (or --live / --dry-run)
+  --decider / --no-decider        decision model (local Strands Decider via Ollama) for merges and promos; off by default
   --runner claude|codex|custom --runner-template "<cmd with {prompt} {mcpConfig} ...>"
   --agent <name>                 a local agent of the breakrocks CLI (breakrocks agents local); asked if absent
   --from-example <name>          start from an example of the kit (examples/: fr-tech, world-economy)

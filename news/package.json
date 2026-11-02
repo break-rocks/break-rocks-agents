@@ -5,8 +5,12 @@
   "license": "Apache-2.0",
   "private": true,
   "type": "module",
-  "bin": { "breakrocks-news": "dist/index.js" },
-  "engines": { "node": ">=22.13" },
+  "bin": {
+    "breakrocks-news": "dist/index.js"
+  },
+  "engines": {
+    "node": ">=22.13"
+  },
   "scripts": {
     "build": "tsc -p tsconfig.build.json",
     "start": "node dist/index.js",
@@ -15,7 +19,8 @@
     "typecheck": "tsc --noEmit",
     "lint": "eslint .",
     "test": "vitest run",
-    "check": "npm run lint && npm run typecheck && npm test"
+    "check": "npm run lint && npm run typecheck && npm test",
+    "eval:decider": "node --experimental-strip-types eval/decider.ts"
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "1.32.2",

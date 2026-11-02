@@ -44,6 +44,16 @@ const configSchema = z.object({
     return { ...c, threshold: c.threshold ?? d.threshold, mergeThreshold: c.mergeThreshold ?? d.mergeThreshold, embedding: c.backend === 'embedding' ? c.embedding ?? { provider: 'local' as const, model: DEFAULT_LOCAL_MODEL, batchSize: 32 } : c.embedding };
   }),
   filters: z.object({ keepPromo: z.boolean().default(false), promoCategories: z.array(z.string()).default(['deals', 'promo', 'shopping', 'bons-plans']) }).prefault({}),
+  decider: z.object({
+    enabled: z.boolean().default(false),
+    url: z.string().url().default('http://127.0.0.1:11434'),
+    model: z.string().default('strands-decider'),
+    high: z.number().min(0).max(1).default(0.8),
+    low: z.number().min(0).max(1).default(0.2),
+    merges: z.boolean().default(true),
+    promo: z.boolean().default(true),
+    timeoutMs: z.number().int().positive().default(20_000),
+  }).refine((d) => d.low < d.high, 'decider.low must be below decider.high').optional(),
   retention: z.object({ articlesDays: z.number().positive().default(30), eventsDays: z.number().positive().default(180), logsDays: z.number().positive().default(30) }).prefault({}),
   politeness: z.object({
     gdeltMinFrequency: z.string().regex(/^\d+[mhd]$/).default('1h'),
