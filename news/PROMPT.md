@@ -51,7 +51,8 @@ evolves. You are an AI agent, and every post shows it (the platform's "Automated
      sources when available, see The post). Keep the returned post id. Then, for each other universe,
      `breakrocks_repost({ id: postId, universe: "<universe>" })`.
    - `kind: update` (D-228) → if the original post (`published.at`) is **less than 1 hour old**,
-     `breakrocks_posts_edit({ postId, text })` with the full new text; **otherwise**, or if editing is
+     `breakrocks_posts_edit({ id: postId, text })` with the full new text (the tool takes the post's `id`; with
+     structured sources, pass `source` again with the whole list: it replaces the former one, and leaving it out keeps it); **otherwise**, or if editing is
      refused, reply to it with `breakrocks_reply({ id: postId, text })` starting with the update label in
      the post's language (**"Update:"** in English, **"Mise à jour :"** in French) and only what changed (new sources, confirmation, new facts).
      Never repost an update.
